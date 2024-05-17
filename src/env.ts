@@ -26,10 +26,15 @@ const envSchema = z.object({
   XMTP_PRIVATE_KEY: z.string().trim().min(1),
 });
 
-const { data, success } = envSchema.safeParse(process.env);
+const { data, success, error } = envSchema.safeParse(process.env);
 
 if (!success) {
-  throw new Error("There is an error with the environment variables.");
+  console.error(
+    `An error has occurred while parsing environment variables:${error.errors.map(
+      (e) => ` ${e.path.join(".")} is ${e.message}`
+    )}`
+  );
+  process.exit(1);
 }
 
 export type EnvSchemaType = z.infer<typeof envSchema>;
