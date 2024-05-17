@@ -11,7 +11,7 @@ import { getAddressFromUsername } from "../utils";
 export const mentionsHandler = async (req: Request, res: Response) => {
   console.log(`[/webhooks/mentions] [${Date.now()}] - new mention received.`);
 
-  const { nominator, nominee, points }: MentionsBody = req.body;
+  const { nominator, nominee, points, farcasterId }: MentionsBody = req.body;
 
   const message: MessageBody = {
     text: `@${nominator} just nominated @${nominee} with ${points} BUILD points`,
@@ -19,7 +19,7 @@ export const mentionsHandler = async (req: Request, res: Response) => {
 
   await Promise.all([
     addToCastsQueue(message),
-    addToDCsQueue({ ...message, recipient: nominee }),
+    addToDCsQueue({ ...message, farcasterId }),
     addToXMTPQueue({
       ...message,
       recipient: await getAddressFromUsername(nominee),

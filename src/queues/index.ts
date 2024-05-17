@@ -1,4 +1,8 @@
-import { MessageBody, MessageWithRecipientBody } from "../schemas";
+import {
+  MessageBody,
+  MessageWithFarcasterIdBody,
+  MessageWithRecipientBody,
+} from "../schemas";
 import { castsQueue, processCast } from "./casts";
 import { dcsQueue, processDC } from "./dcs";
 import { xmtpQueue, processXMTPMessage } from "./xmtp";
@@ -15,7 +19,7 @@ export const addToCastsQueue = async (data: MessageBody) => {
   }
 };
 
-export const addToDCsQueue = async (data: MessageWithRecipientBody) => {
+export const addToDCsQueue = async (data: MessageWithFarcasterIdBody) => {
   try {
     await dcsQueue.add(DCS_JOB_NAME, data);
   } catch (error) {

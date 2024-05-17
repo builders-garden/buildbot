@@ -1,7 +1,11 @@
 import Cron from "croner";
 import { env } from "../env";
 import { sendDirectCast, sendXMTPMessage } from "../utils";
-import { MessageWithRecipientBody, RemindersBody } from "../schemas";
+import {
+  MessageWithFarcasterIdBody,
+  MessageWithRecipientBody,
+  RemindersBody,
+} from "../schemas";
 import ky from "ky";
 
 // this job runs every wednesday
@@ -21,7 +25,7 @@ export const runReminderJob = () =>
 
     // build the messages
     const xmtpMessages: MessageWithRecipientBody[] = [];
-    const directMessages: MessageWithRecipientBody[] = [];
+    const directMessages: MessageWithFarcasterIdBody[] = [];
 
     for (const reminder of reminders) {
       const {
@@ -29,7 +33,7 @@ export const runReminderJob = () =>
         nominationsBudget,
         wastedPoints,
         wallets,
-        farcasterUsername,
+        farcasterId,
       } = reminder;
       const text = `This week you nominated ${nominationsSent} builders, out of ${nominationsBudget} possible. You wasted ${wastedPoints} BUILD points you could have gifted someone.`;
 
@@ -41,7 +45,7 @@ export const runReminderJob = () =>
       }
 
       directMessages.push({
-        recipient: farcasterUsername,
+        farcasterId,
         text,
       });
     }
@@ -63,11 +67,11 @@ export const runReminderJob = () =>
 
     for (const message of directMessages) {
       try {
-        await sendDirectCast(message.recipient, message.text);
+        await sendDirectCast(message.farcasterId, message.text);
       } catch (error) {
         console.error(
           `[reminder job] [${Date.now()}] - error sending direct message to ${
-            message.recipient
+            message.farcasterId
           }`,
           error
         );

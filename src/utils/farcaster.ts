@@ -23,10 +23,10 @@ export const publishCast = async (
 /**
  * @dev this function sends a direct cast to the given recipient
  * @param {string} text the text of the cast to send
- * @param {string} recipient username of the recipient of the cast
+ * @param {number} recipient farcaster id of the recipient
  */
 // @ts-ignore
-export const sendDirectCast = async (text: string, recipient: string) => {};
+export const sendDirectCast = async (recipient: number, text: string) => {};
 
 /**
  * @dev this function returns the custody address from a farcaster username

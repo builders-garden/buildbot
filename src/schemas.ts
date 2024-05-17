@@ -3,6 +3,7 @@ import z from "zod";
 export const mentionsSchema = z.object({
   nominator: z.string().min(1),
   nominee: z.string().min(1),
+  farcasterId: z.number(),
   points: z.number().positive().min(0),
 });
 
@@ -23,13 +24,22 @@ export type MessageWithRecipientBody = z.infer<
   typeof messageWithRecipientSchema
 >;
 
+export const messageWithFarcasterIdSchema = z.object({
+  text: z.string().min(1),
+  farcasterId: z.number(),
+});
+
+export type MessageWithFarcasterIdBody = z.infer<
+  typeof messageWithFarcasterIdSchema
+>;
+
 export const remindersSchema = z.array(
   z.object({
     nominationsBudget: z.number().default(0),
     nominationsSent: z.number().default(0),
     wastedPoints: z.number().default(0),
     wallets: z.array(z.string().startsWith("0x")).default([]),
-    farcasterUsername: z.string(),
+    farcasterId: z.number(),
   })
 );
 
@@ -41,7 +51,7 @@ export const weeklyStatsSchema = z.array(
     nominationsSent: z.number().default(0),
     earnedPoints: z.number().default(0),
     wallets: z.array(z.string().startsWith("0x")).default([]),
-    farcasterUsername: z.string(),
+    farcasterId: z.number(),
   })
 );
 
