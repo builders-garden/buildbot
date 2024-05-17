@@ -90,10 +90,9 @@ the body of the request should be a JSON object with the following structure:
 
 ```json
 {
-  "nominator": "", // farcaster username of the nominator
-  "nominee": "", // farcaster username of the nominee
   "points": "", // points used in the nomination
-  "farcasterId": 0 // farcaster ID of the nominee
+  "nominatorFarcasterId": 0, // farcaster ID of the nominee
+  "nomineeFarcasterId": 0 // farcaster ID of the nominator
 }
 ```
 

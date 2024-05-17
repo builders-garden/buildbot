@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { MentionsBody, MessageBody } from "../schemas";
 import { addToCastsQueue, addToDCsQueue, addToXMTPQueue } from "../queues";
-import { getAddressFromUsername } from "../utils";
+import { getAddressFromUsername, getUsernameFromFarcasterId } from "../utils";
 
 /**
  * @dev this function handles the mentions webhook
@@ -11,7 +11,13 @@ import { getAddressFromUsername } from "../utils";
 export const mentionsHandler = async (req: Request, res: Response) => {
   console.log(`[/webhooks/mentions] [${Date.now()}] - new mention received.`);
 
-  const { nominator, nominee, points, farcasterId }: MentionsBody = req.body;
+  const { nominatorFarcasterId, nomineeFarcasterId, points }: MentionsBody =
+    req.body;
+
+  const [nominator, nominee] = await Promise.all([
+    getUsernameFromFarcasterId(nominatorFarcasterId),
+    getUsernameFromFarcasterId(nomineeFarcasterId),
+  ]);
 
   const message: MessageBody = {
     text: `@${nominator} just nominated @${nominee} with ${points} BUILD points`,
@@ -19,7 +25,7 @@ export const mentionsHandler = async (req: Request, res: Response) => {
 
   await Promise.all([
     addToCastsQueue(message),
-    addToDCsQueue({ ...message, farcasterId }),
+    addToDCsQueue({ ...message, farcasterId: nomineeFarcasterId }),
     addToXMTPQueue({
       ...message,
       recipient: await getAddressFromUsername(nominee),

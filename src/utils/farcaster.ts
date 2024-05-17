@@ -42,3 +42,7 @@ export const getAddressFromUsername = async (username: string) => {
 
   return custodyAddress;
 };
+
+export const getUsernameFromFarcasterId = async (farcasterId: number) => {
+  return "";
+};
