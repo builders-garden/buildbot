@@ -43,6 +43,16 @@ export const getAddressFromUsername = async (username: string) => {
   return custodyAddress;
 };
 
-export const getUsernameFromFarcasterId = async (farcasterId: number) => {
-  return "";
+/**
+ * @dev this function returns the usernames from farcaster ids
+ * @param {number[]} farcasterIds the farcaster ids to lookup
+ * @returns {Promise<{nominator: string, nominee: string}>} the usernames of the nominator and nominee
+ */
+export const getUsernamesFromIds = async (farcasterIds: number[]) => {
+  const { users } = await client.fetchBulkUsers(farcasterIds);
+
+  const nominator = users.find((user) => user.fid === farcasterIds[0]);
+  const nominee = users.find((user) => user.fid === farcasterIds[1]);
+
+  return { nominator: nominator!.username, nominee: nominee!.username };
 };
