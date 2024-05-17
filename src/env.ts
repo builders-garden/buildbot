@@ -18,6 +18,7 @@ const envSchema = z.object({
     .string()
     .transform((val) => (val ? parseInt(val) : undefined))
     .optional(),
+  WARPCAST_API_KEY: z.string(),
   WEBHOOK_KEY: z.string().trim().min(1),
   REMINDER_CRON: z.string().trim().optional().default("0 0 * * 3"),
   WEEKLY_STATS_CRON: z.string().trim().optional().default("0 0 * * 0"),

@@ -67,6 +67,7 @@ REMINDER_CRON="0 0 * * 3" # cron expression for the reminder job (default "0 0 *
 WEEKLY_STATS_CRON="0 0 * * 0" # cron expression for the weekly stats job (default "0 0 * * 0", can be omitted)
 XMTP_ENV="dev" # XMTP environment (default "dev", can be omitted)
 XMTP_PRIVATE_KEY="" # XMTP private key (used for sending XMTP messages)
+WARPCAST_API_KEY="" # warpcast api key for sending direct casts
 ```
 
 if you want to enable the **Redis** queues, you need to add the following environment variables:

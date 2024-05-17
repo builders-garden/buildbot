@@ -1,6 +1,8 @@
 import { NeynarAPIClient } from "@neynar/nodejs-sdk";
 import { env } from "../env";
 import { EmbeddedCast } from "@neynar/nodejs-sdk/build/neynar-api/v2";
+import ky from "ky";
+import { v4 as uuidv4 } from "uuid";
 
 const SIGNER_UUID = env.FARCASTER_SIGNER_UUID as string;
 const client = new NeynarAPIClient(env.FARCASTER_API_KEY as string);
@@ -9,7 +11,7 @@ const client = new NeynarAPIClient(env.FARCASTER_API_KEY as string);
  * @dev this function publishes a cast to the given farcaster channel
  * @param {string} text the text of the cast to publish
  * @param options the options to pass to Neynar
- * @returns {string} hash of the newly created cast
+ * @returns {Promise<string>} hash of the newly created cast
  */
 export const publishCast = async (
   text: string,
@@ -25,8 +27,32 @@ export const publishCast = async (
  * @param {string} text the text of the cast to send
  * @param {number} recipient farcaster id of the recipient
  */
-// @ts-ignore
-export const sendDirectCast = async (recipient: number, text: string) => {};
+export const sendDirectCast = async (recipient: number, text: string) => {
+  if (!env.FARCASTER_API_KEY) {
+    console.log("No FARCASTER_API_KEY found, skipping direct cast send.");
+    return;
+  }
+
+  const {
+    result: { success },
+  } = await ky
+    .post("https://api.warpcast.com/v2/ext-send-direct-cast", {
+      headers: {
+        Authorization: `Bearer ${env.FARCASTER_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      json: {
+        recipientFid: recipient,
+        message: text,
+        idempotencyKey: uuidv4(),
+      },
+    })
+    .json<{ result: { success: boolean } }>();
+
+  if (!success) {
+    console.error(`error sending direct cast to ${recipient}.`);
+  }
+};
 
 /**
  * @dev this function returns the custody address from a farcaster username
