@@ -51,7 +51,7 @@ export const runReminderJob = () =>
     }
 
     // send the messages
-    // we use direct for loops and not Promise.all to avoid parallelism and possible rate limiting
+    // we use direct for loops and not Promise.all to avoid possible rate limiting
     for (const message of xmtpMessages) {
       try {
         await sendXMTPMessage(message.recipient, message.text);
