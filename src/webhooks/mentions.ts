@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { MentionsBody, MessageBody } from "../schemas";
-import { addToCastsQueue, addToDCsQueue, addToXMTPQueue } from "../queues";
-import { getAddressFromUsername, getUsernamesFromIds } from "../utils";
+import { addToCastsQueue } from "../queues";
+import { getUsernamesFromIds } from "../utils";
 
 /**
  * @dev this function handles the mentions webhook
@@ -25,11 +25,11 @@ export const mentionsHandler = async (req: Request, res: Response) => {
 
   await Promise.all([
     addToCastsQueue(message),
-    addToDCsQueue({ ...message, farcasterId: nomineeFarcasterId }),
-    addToXMTPQueue({
-      ...message,
-      recipient: await getAddressFromUsername(nominee),
-    }),
+    // addToDCsQueue({ ...message, farcasterId: nomineeFarcasterId }),
+    // addToXMTPQueue({
+    //   ...message,
+    //   recipient: await getAddressFromUsername(nominee),
+    // }),
   ]);
 
   res.status(200).send({ status: "ok" });
