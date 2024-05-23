@@ -1,7 +1,7 @@
 import { Queue, Worker } from "bullmq";
-import { MessageBody } from "../schemas";
-import { publishCast } from "../utils";
-import { env } from "../env";
+import { MessageBody } from "../schemas.js";
+import { publishCast } from "../utils/index.js";
+import { env } from "../env.js";
 
 const CASTS_QUEUE_NAME = "casts";
 

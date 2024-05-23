@@ -1,6 +1,6 @@
-import { env } from "../env";
-import { runReminderJob } from "./reminder";
-import { runWeeklyStatsJob } from "./weekly-stats";
+import { env } from "../env.js";
+import { runReminderJob } from "./reminder.js";
+import { runWeeklyStatsJob } from "./weekly-stats.js";
 
 /**
  * @dev starts all the background jobs after the express app has started.

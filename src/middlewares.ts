@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { env } from "./env";
+import { env } from "./env.js";
 
 /**
  * @dev simple middleware that checks for the presence of the x-webhook-key header

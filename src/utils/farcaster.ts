@@ -1,5 +1,5 @@
 import { NeynarAPIClient } from "@neynar/nodejs-sdk";
-import { env } from "../env";
+import { env } from "../env.js";
 import { EmbeddedCast } from "@neynar/nodejs-sdk/build/neynar-api/v2";
 import ky from "ky";
 import { v4 as uuidv4 } from "uuid";

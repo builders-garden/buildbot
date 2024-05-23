@@ -1,2 +1,2 @@
-export * from "./farcaster";
-export * from "./xmtp";
+export * from "./farcaster.js";
+export * from "./xmtp.js";

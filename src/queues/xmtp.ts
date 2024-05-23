@@ -1,7 +1,7 @@
 import { Queue, Worker } from "bullmq";
-import { sendXMTPMessage } from "../utils";
-import { MessageWithRecipientBody } from "../schemas";
-import { env } from "../env";
+import { sendXMTPMessage } from "../utils/index.js";
+import { MessageWithRecipientBody } from "../schemas.js";
+import { env } from "../env.js";
 
 const XMTP_QUEUE_NAME = "xmtp";
 

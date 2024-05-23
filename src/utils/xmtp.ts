@@ -1,4 +1,4 @@
-import { env } from "../env";
+import { env } from "../env.js";
 import { Client } from "@xmtp/xmtp-js";
 import { GrpcApiClient } from "@xmtp/grpc-api-client";
 import { Wallet } from "ethers";

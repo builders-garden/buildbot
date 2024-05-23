@@ -1,7 +1,7 @@
 import { Queue, Worker } from "bullmq";
-import { sendDirectCast } from "../utils";
-import { MessageWithFarcasterIdBody } from "../schemas";
-import { env } from "../env";
+import { sendDirectCast } from "../utils/index.js";
+import { MessageWithFarcasterIdBody } from "../schemas.js";
+import { env } from "../env.js";
 
 const DCS_QUEUE_NAME = "dcs";
 

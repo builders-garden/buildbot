@@ -1,7 +1,7 @@
-import { env } from "./env";
+import { env } from "./env.js";
 import express from "express";
-import webhooksRouter from "./webhooks";
-import { startJobs } from "./jobs";
+import webhooksRouter from "./webhooks/index.js";
+import { startJobs } from "./jobs/index.js";
 
 export const app = express();
 

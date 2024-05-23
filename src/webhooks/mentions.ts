@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
-import { MentionsBody, MessageBody } from "../schemas";
-import { addToCastsQueue } from "../queues";
-import { getFarcasterUsersByAddresses } from "../utils";
+import { MentionsBody, MessageBody } from "../schemas.js";
+import { getFarcasterUsersByAddresses } from "../utils/index.js";
 
 /**
  * @dev this function handles the mentions webhook
@@ -18,12 +17,20 @@ export const mentionsHandler = async (req: Request, res: Response) => {
     nominatorWallet,
   ]);
 
-  const nominatedUser = users[nominatedWallet];
-  const nominatorUser = users[nominatorWallet];
+  const nominatedUser = users[nominatedWallet.toLowerCase()];
+  const nominatorUser = users[nominatorWallet.toLowerCase()];
 
-  if (!nominatedUser || !nominatorUser) {
+  if (!nominatedUser) {
     console.error(
-      `[mentionsHandler] [${Date.now()}] - user not found in farcaster.`
+      `[mentionsHandler] [${Date.now()}] - ${nominatedWallet} not found in farcaster.`
+    );
+    res.status(200).send({ status: "nok" });
+    return;
+  }
+
+  if (!nominatorUser) {
+    console.error(
+      `[mentionsHandler] [${Date.now()}] - ${nominatorWallet} not found in farcaster.`
     );
     res.status(200).send({ status: "nok" });
     return;
@@ -34,7 +41,7 @@ export const mentionsHandler = async (req: Request, res: Response) => {
   };
 
   await Promise.all([
-    addToCastsQueue(message),
+    // addToCastsQueue(message),
     // addToDCsQueue({ ...message, farcasterId: nomineeFarcasterId }),
     // addToXMTPQueue({
     //   ...message,

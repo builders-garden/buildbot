@@ -1,11 +1,11 @@
 import Cron from "croner";
-import { env } from "../env";
+import { env } from "../env.js";
 import {
   MessageWithFarcasterIdBody,
   MessageWithRecipientBody,
   WeeklyStatsBody,
-} from "../schemas";
-import { sendDirectCast, sendXMTPMessage } from "../utils";
+} from "../schemas.js";
+import { sendDirectCast, sendXMTPMessage } from "../utils/index.js";
 import ky from "ky";
 
 // this job runs every sunday

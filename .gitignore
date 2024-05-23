@@ -1,5 +1,5 @@
 node_modules/
 .vscode/
-.env/
+.env
 yarn-error.log
 dist/

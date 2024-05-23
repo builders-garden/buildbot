@@ -2,10 +2,10 @@ import {
   MessageBody,
   MessageWithFarcasterIdBody,
   MessageWithRecipientBody,
-} from "../schemas";
-import { castsQueue, processCast } from "./casts";
-import { dcsQueue, processDC } from "./dcs";
-import { xmtpQueue, processXMTPMessage } from "./xmtp";
+} from "../schemas.js";
+import { castsQueue, processCast } from "./casts.js";
+import { dcsQueue, processDC } from "./dcs.js";
+import { xmtpQueue, processXMTPMessage } from "./xmtp.js";
 
 const CASTS_JOB_NAME = "create-cast";
 const DCS_JOB_NAME = "create-dc";
