@@ -1,8 +1,8 @@
 import z from "zod";
 
 export const mentionsSchema = z.object({
-  nominatorFarcasterId: z.number(),
-  nomineeFarcasterId: z.number(),
+  nominatorWallet: z.string(),
+  nominatedWallet: z.string(),
   points: z.number().positive().min(0),
 });
 

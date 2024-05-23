@@ -70,6 +70,14 @@ export const getAddressFromUsername = async (username: string) => {
 };
 
 /**
+ * @dev returns the farcaster users by their ethereum addresses
+ * @param {string[]} addresses the ethereum addresses to lookup
+ * @returns list of farcaster users
+ */
+export const getFarcasterUsersByAddresses = async (addresses: string[]) =>
+  await client.fetchBulkUsersByEthereumAddress(addresses);
+
+/**
  * @dev this function returns the usernames from farcaster ids
  * @param {number[]} farcasterIds the farcaster ids to lookup
  * @returns {Promise<{nominator: string, nominee: string}>} the usernames of the nominator and nominee
