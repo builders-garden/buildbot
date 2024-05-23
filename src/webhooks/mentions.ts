@@ -43,10 +43,10 @@ export const mentionsHandler = async (req: Request, res: Response) => {
 
   await Promise.all([
     addToCastsQueue(message),
-    // addToDCsQueue({ ...message, farcasterId: nomineeFarcasterId }),
+    // addToDCsQueue({ ...message, farcasterId: nominatedUser[0].fid }),
     // addToXMTPQueue({
     //   ...message,
-    //   recipient: await getAddressFromUsername(nominee),
+    //   recipient: nominatedWallet,
     // }),
   ]);
 
