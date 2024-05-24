@@ -24,10 +24,12 @@ if (env.REDIS_HOST) {
   const dcsWorker = new Worker(DCS_QUEUE_NAME, processDC);
 }
 
-export const dcsQueue = new Queue(DCS_QUEUE_NAME, {
-  connection: {
-    host: env.REDIS_HOST,
-    port: env.REDIS_PORT,
-    enableOfflineQueue: false,
-  },
-});
+export const dcsQueue = env.REDIS_HOST
+  ? new Queue(DCS_QUEUE_NAME, {
+      connection: {
+        host: env.REDIS_HOST,
+        port: env.REDIS_PORT,
+        enableOfflineQueue: false,
+      },
+    })
+  : null;

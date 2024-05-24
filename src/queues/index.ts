@@ -12,25 +12,25 @@ const DCS_JOB_NAME = "create-dc";
 const XMTP_JOB_NAME = "send-xmtp-message";
 
 export const addToCastsQueue = async (data: MessageBody) => {
-  try {
+  if (castsQueue) {
     await castsQueue.add(CASTS_JOB_NAME, data);
-  } catch (error) {
-    await processCast({ data });
+    return;
   }
+  await processCast({ data });
 };
 
 export const addToDCsQueue = async (data: MessageWithFarcasterIdBody) => {
-  try {
+  if (dcsQueue) {
     await dcsQueue.add(DCS_JOB_NAME, data);
-  } catch (error) {
-    await processDC({ data });
+    return;
   }
+  await processDC({ data });
 };
 
 export const addToXMTPQueue = async (data: MessageWithRecipientBody) => {
-  try {
+  if (xmtpQueue) {
     await xmtpQueue.add(XMTP_JOB_NAME, data);
-  } catch (error) {
-    await processXMTPMessage({ data });
+    return;
   }
+  await processXMTPMessage({ data });
 };

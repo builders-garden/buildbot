@@ -26,10 +26,12 @@ if (env.REDIS_HOST) {
   const castsWorker = new Worker(CASTS_QUEUE_NAME, processCast);
 }
 
-export const castsQueue = new Queue(CASTS_QUEUE_NAME, {
-  connection: {
-    host: env.REDIS_HOST,
-    port: env.REDIS_PORT,
-    enableOfflineQueue: false,
-  },
-});
+export const castsQueue = env.REDIS_HOST
+  ? new Queue(CASTS_QUEUE_NAME, {
+      connection: {
+        host: env.REDIS_HOST,
+        port: env.REDIS_PORT,
+        enableOfflineQueue: false,
+      },
+    })
+  : null;

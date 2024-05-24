@@ -30,10 +30,12 @@ if (env.REDIS_HOST) {
   const xmtpWorker = new Worker(XMTP_QUEUE_NAME, processXMTPMessage);
 }
 
-export const xmtpQueue = new Queue(XMTP_QUEUE_NAME, {
-  connection: {
-    host: env.REDIS_HOST,
-    port: env.REDIS_PORT,
-    enableOfflineQueue: false,
-  },
-});
+export const xmtpQueue = env.REDIS_HOST
+  ? new Queue(XMTP_QUEUE_NAME, {
+      connection: {
+        host: env.REDIS_HOST,
+        port: env.REDIS_PORT,
+        enableOfflineQueue: false,
+      },
+    })
+  : null;
