@@ -7,6 +7,7 @@ const envSchema = z.object({
   FARCASTER_API_KEY: z.string().trim().min(1),
   FARCASTER_SIGNER_UUID: z.string().trim().min(1),
   FARCASTER_CHANNEL_ID: z.string().trim().min(1),
+  FARCASTER_REPLY_TO_CAST_HASH: z.string().trim().min(1),
   ENABLE_JOBS: z
     .string()
     .trim()
