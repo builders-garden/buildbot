@@ -15,7 +15,7 @@ const client = new NeynarAPIClient(env.FARCASTER_API_KEY as string);
  */
 export const publishCast = async (
   text: string,
-  options?: { embeds?: EmbeddedCast[]; channelId: string }
+  options?: { embeds?: EmbeddedCast[]; channelId?: string, replyTo?: string}
 ) => {
   const { hash } = await client.publishCast(SIGNER_UUID, text, options);
 
