@@ -38,7 +38,9 @@ export const mentionsHandler = async (req: Request, res: Response) => {
   }
 
   const message: MessageBody = {
-    text: `@${nominatorUser[0].username} just nominated @${nominatedUser[0].username} with ${points} BUILD points`,
+    text: `@${nominatorUser[0].username} just nominated @${
+      nominatedUser[0].username
+    } with ${points.toFixed(2)} BUILD points`,
   };
 
   await Promise.all([
