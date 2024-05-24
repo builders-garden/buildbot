@@ -14,7 +14,7 @@ export const processCast = async (job: { data: MessageBody }) => {
 
   console.log(`[casts worker] [${Date.now()}] - new cast received. iterating.`);
 
-  const hash = await publishCast(text, { channelId: env.FARCASTER_CHANNEL_ID });
+  const hash = await publishCast(text);
 
   console.log(
     `[casts worker] [${Date.now()}] - cast ${hash} published successfully .`
