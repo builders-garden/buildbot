@@ -21,8 +21,10 @@ export const processCast = async (job: { data: MessageBody }) => {
   );
 };
 
-// @ts-ignore
-const castsWorker = new Worker(CASTS_QUEUE_NAME, processCast);
+if (env.REDIS_HOST) {
+  // @ts-ignore
+  const castsWorker = new Worker(CASTS_QUEUE_NAME, processCast);
+}
 
 export const castsQueue = new Queue(CASTS_QUEUE_NAME, {
   connection: {

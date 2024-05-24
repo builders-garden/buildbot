@@ -19,8 +19,10 @@ export const processDC = async (job: { data: MessageWithFarcasterIdBody }) => {
   console.log(`[dcs worker] [${Date.now()}] - dc sent successfully.`);
 };
 
-// @ts-ignore
-const dcsWorker = new Worker(DCS_QUEUE_NAME, processDC);
+if (env.REDIS_HOST) {
+  // @ts-ignore
+  const dcsWorker = new Worker(DCS_QUEUE_NAME, processDC);
+}
 
 export const dcsQueue = new Queue(DCS_QUEUE_NAME, {
   connection: {

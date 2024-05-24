@@ -25,8 +25,10 @@ export const processXMTPMessage = async (job: {
   );
 };
 
-// @ts-ignore
-const xmtpWorker = new Worker(XMTP_QUEUE_NAME, processXMTPMessage);
+if (env.REDIS_HOST) {
+  // @ts-ignore
+  const xmtpWorker = new Worker(XMTP_QUEUE_NAME, processXMTPMessage);
+}
 
 export const xmtpQueue = new Queue(XMTP_QUEUE_NAME, {
   connection: {
