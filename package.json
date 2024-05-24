@@ -29,5 +29,8 @@
     "@types/node": "^20.12.12",
     "@types/uuid": "^9.0.8",
     "typescript": "^5.4.5"
+  },
+  "engines": {
+    "node": ">=19.9.0"
   }
 }
