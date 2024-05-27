@@ -1,4 +1,3 @@
-import { env } from "../env.js";
 import {
   MessageBody,
   MessageWithFarcasterIdBody,
@@ -7,14 +6,6 @@ import {
 import { castsQueue, processCast } from "./casts.js";
 import { dcsQueue, processDC } from "./dcs.js";
 import { xmtpQueue, processXMTPMessage } from "./xmtp.js";
-
-export const redisConnection = {
-  username: env.REDIS_USERNAME!,
-  password: env.REDIS_PASSWORD!,
-  host: process.env.REDIS_HOST!,
-  port: env.REDIS_PORT,
-  enableOfflineQueue: false,
-};
 
 const CASTS_JOB_NAME = "create-cast";
 const DCS_JOB_NAME = "create-dc";

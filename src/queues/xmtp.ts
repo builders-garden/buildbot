@@ -2,7 +2,6 @@ import { Queue, Worker } from "bullmq";
 import { sendXMTPMessage } from "../utils/index.js";
 import { MessageWithRecipientBody } from "../schemas.js";
 import { env } from "../env.js";
-import { redisConnection } from "./index.js";
 
 const XMTP_QUEUE_NAME = "xmtp";
 
@@ -29,12 +28,24 @@ export const processXMTPMessage = async (job: {
 if (env.REDIS_HOST) {
   // @ts-ignore
   const xmtpWorker = new Worker(XMTP_QUEUE_NAME, processXMTPMessage, {
-    connection: redisConnection,
+    connection: {
+      username: env.REDIS_USERNAME!,
+      password: env.REDIS_PASSWORD!,
+      host: process.env.REDIS_HOST!,
+      port: env.REDIS_PORT,
+      enableOfflineQueue: false,
+    },
   });
 }
 
 export const xmtpQueue = env.REDIS_HOST
   ? new Queue(XMTP_QUEUE_NAME, {
-      connection: redisConnection,
+      connection: {
+        username: env.REDIS_USERNAME!,
+        password: env.REDIS_PASSWORD!,
+        host: process.env.REDIS_HOST!,
+        port: env.REDIS_PORT,
+        enableOfflineQueue: false,
+      },
     })
   : null;
