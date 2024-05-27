@@ -2,6 +2,7 @@ import { Queue, Worker } from "bullmq";
 import { MessageBody } from "../schemas.js";
 import { publishCast } from "../utils/index.js";
 import { env } from "../env.js";
+import { redisConnection } from "./connection.js";
 
 const CASTS_QUEUE_NAME = "casts";
 
@@ -26,24 +27,12 @@ export const processCast = async (job: { data: MessageBody }) => {
 if (env.REDIS_HOST) {
   // @ts-ignore
   const castsWorker = new Worker(CASTS_QUEUE_NAME, processCast, {
-    connection: {
-      username: env.REDIS_USERNAME,
-      password: env.REDIS_PASSWORD,
-      host: process.env.REDIS_HOST,
-      port: env.REDIS_PORT,
-      enableOfflineQueue: false,
-    },
+    connection: redisConnection,
   });
 }
 
 export const castsQueue = env.REDIS_HOST
   ? new Queue(CASTS_QUEUE_NAME, {
-      connection: {
-        username: env.REDIS_USERNAME,
-        password: env.REDIS_PASSWORD,
-        host: process.env.REDIS_HOST,
-        port: env.REDIS_PORT,
-        enableOfflineQueue: false,
-      },
+      connection: redisConnection,
     })
   : null;
