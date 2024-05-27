@@ -27,9 +27,9 @@ if (env.REDIS_HOST) {
   // @ts-ignore
   const castsWorker = new Worker(CASTS_QUEUE_NAME, processCast, {
     connection: {
-      username: env.REDIS_USERNAME!,
-      password: env.REDIS_PASSWORD!,
-      host: process.env.REDIS_HOST!,
+      username: env.REDIS_USERNAME,
+      password: env.REDIS_PASSWORD,
+      host: process.env.REDIS_HOST,
       port: env.REDIS_PORT,
       enableOfflineQueue: false,
     },
@@ -39,9 +39,9 @@ if (env.REDIS_HOST) {
 export const castsQueue = env.REDIS_HOST
   ? new Queue(CASTS_QUEUE_NAME, {
       connection: {
-        username: env.REDIS_USERNAME!,
-        password: env.REDIS_PASSWORD!,
-        host: process.env.REDIS_HOST!,
+        username: env.REDIS_USERNAME,
+        password: env.REDIS_PASSWORD,
+        host: process.env.REDIS_HOST,
         port: env.REDIS_PORT,
         enableOfflineQueue: false,
       },

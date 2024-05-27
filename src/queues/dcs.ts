@@ -23,9 +23,9 @@ if (env.REDIS_HOST) {
   // @ts-ignore
   const dcsWorker = new Worker(DCS_QUEUE_NAME, processDC, {
     connection: {
-      username: env.REDIS_USERNAME!,
-      password: env.REDIS_PASSWORD!,
-      host: process.env.REDIS_HOST!,
+      username: env.REDIS_USERNAME,
+      password: env.REDIS_PASSWORD,
+      host: process.env.REDIS_HOST,
       port: env.REDIS_PORT,
       enableOfflineQueue: false,
     },
@@ -35,9 +35,9 @@ if (env.REDIS_HOST) {
 export const dcsQueue = env.REDIS_HOST
   ? new Queue(DCS_QUEUE_NAME, {
       connection: {
-        username: env.REDIS_USERNAME!,
-        password: env.REDIS_PASSWORD!,
-        host: process.env.REDIS_HOST!,
+        username: env.REDIS_USERNAME,
+        password: env.REDIS_PASSWORD,
+        host: process.env.REDIS_HOST,
         port: env.REDIS_PORT,
         enableOfflineQueue: false,
       },

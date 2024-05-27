@@ -29,9 +29,9 @@ if (env.REDIS_HOST) {
   // @ts-ignore
   const xmtpWorker = new Worker(XMTP_QUEUE_NAME, processXMTPMessage, {
     connection: {
-      username: env.REDIS_USERNAME!,
-      password: env.REDIS_PASSWORD!,
-      host: process.env.REDIS_HOST!,
+      username: env.REDIS_USERNAME,
+      password: env.REDIS_PASSWORD,
+      host: process.env.REDIS_HOST,
       port: env.REDIS_PORT,
       enableOfflineQueue: false,
     },
@@ -41,9 +41,9 @@ if (env.REDIS_HOST) {
 export const xmtpQueue = env.REDIS_HOST
   ? new Queue(XMTP_QUEUE_NAME, {
       connection: {
-        username: env.REDIS_USERNAME!,
-        password: env.REDIS_PASSWORD!,
-        host: process.env.REDIS_HOST!,
+        username: env.REDIS_USERNAME,
+        password: env.REDIS_PASSWORD,
+        host: process.env.REDIS_HOST,
         port: env.REDIS_PORT,
         enableOfflineQueue: false,
       },
