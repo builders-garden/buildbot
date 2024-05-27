@@ -24,6 +24,8 @@ const envSchema = z.object({
     .string()
     .transform((val) => (val ? parseInt(val) : undefined))
     .optional(),
+  REDIS_USERNAME: z.string().optional(),
+  REDIS_PASSWORD: z.string().optional(),
   WARPCAST_API_KEY: z.string(),
   WEBHOOK_KEY: z.string().trim().min(1),
   REMINDER_CRON: z.string().trim().optional().default("0 0 * * 3"),
