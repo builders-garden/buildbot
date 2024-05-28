@@ -13,7 +13,10 @@ const XMTP_JOB_NAME = "send-xmtp-message";
 
 export const addToCastsQueue = async (data: MessageBody) => {
   if (castsQueue) {
-    await castsQueue.add(`${CASTS_JOB_NAME}-${data.id}`, data, { attempts: 1 });
+    await castsQueue.add(`${CASTS_JOB_NAME}-${data.id}`, data, {
+      attempts: 1,
+      delay: 1000,
+    });
     return;
   }
   await processCast({ data });
@@ -21,7 +24,10 @@ export const addToCastsQueue = async (data: MessageBody) => {
 
 export const addToDCsQueue = async (data: MessageWithFarcasterIdBody) => {
   if (dcsQueue) {
-    await dcsQueue.add(`${DCS_JOB_NAME}-${data.id}`, data, { attempts: 1 });
+    await dcsQueue.add(`${DCS_JOB_NAME}-${data.id}`, data, {
+      attempts: 1,
+      delay: 1000,
+    });
     return;
   }
   await processDC({ data });
@@ -29,7 +35,10 @@ export const addToDCsQueue = async (data: MessageWithFarcasterIdBody) => {
 
 export const addToXMTPQueue = async (data: MessageWithRecipientBody) => {
   if (xmtpQueue) {
-    await xmtpQueue.add(`${XMTP_JOB_NAME}-${data.id}`, data, { attempts: 1 });
+    await xmtpQueue.add(`${XMTP_JOB_NAME}-${data.id}`, data, {
+      attempts: 1,
+      delay: 1000,
+    });
     return;
   }
   await processXMTPMessage({ data });
