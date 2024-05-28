@@ -27,6 +27,10 @@ if (env.REDIS_HOST) {
     metrics: {
       maxDataPoints: MetricsTime.ONE_WEEK,
     },
+    limiter: {
+      max: 1,
+      duration: 1000,
+    },
   });
 }
 

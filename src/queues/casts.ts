@@ -24,8 +24,9 @@ export const processCast = async (job: { data: MessageBody }) => {
     );
   } catch (error) {
     console.error(
-      `[casts worker] [${Date.now()}] - error publishing cast:`,
-      error
+      `[casts worker] [${Date.now()}] - error publishing cast: ${
+        error instanceof Error ? error.message : "unknown error"
+      }.`
     );
   }
 };
@@ -36,6 +37,10 @@ if (env.REDIS_HOST) {
     connection: redisConnection,
     metrics: {
       maxDataPoints: MetricsTime.ONE_WEEK,
+    },
+    limiter: {
+      max: 1,
+      duration: 1000,
     },
   });
 }
