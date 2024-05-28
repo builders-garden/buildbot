@@ -9,9 +9,11 @@ import { addToCastsQueue } from "../queues/index.js";
  * @param {Response} res output express response
  */
 export const mentionsHandler = async (req: Request, res: Response) => {
-  console.log(`[/webhooks/mentions] [${Date.now()}] - new mention received.`);
-
   const { nominatedWallet, nominatorWallet, points }: MentionsBody = req.body;
+
+  console.log(
+    `[/webhooks/mentions] [${Date.now()}] - new mention received - [nominator: ${nominatorWallet}] - [nominated: ${nominatedWallet}] - [points: ${points}].`
+  );
 
   const users = await getFarcasterUsersByAddresses([
     nominatedWallet,
