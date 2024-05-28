@@ -10,12 +10,14 @@ export type MentionsBody = z.infer<typeof mentionsSchema>;
 
 export const messageSchema = z.object({
   text: z.string().min(1),
+  id: z.string().min(1),
 });
 
 export type MessageBody = z.infer<typeof messageSchema>;
 
 export const messageWithRecipientSchema = z.object({
   text: z.string().min(1),
+  id: z.string().min(1),
   recipient: z.string().min(1),
 });
 
@@ -25,6 +27,7 @@ export type MessageWithRecipientBody = z.infer<
 
 export const messageWithFarcasterIdSchema = z.object({
   text: z.string().min(1),
+  id: z.string().min(1),
   farcasterId: z.number(),
 });
 

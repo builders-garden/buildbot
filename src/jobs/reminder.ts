@@ -39,12 +39,14 @@ export const runReminderJob = () =>
 
       for (const wallet of wallets) {
         xmtpMessages.push({
+          id: `reminder-${Date.now()}-xmtp-${wallet}`,
           recipient: wallet,
           text,
         });
       }
 
       directMessages.push({
+        id: `reminder-${Date.now()}-dc-${farcasterId}`,
         farcasterId,
         text,
       });

@@ -39,12 +39,14 @@ export const runWeeklyStatsJob = () =>
 
       for (const wallet of wallets) {
         xmtpMessages.push({
+          id: `weekly-stats-${Date.now()}-xmtp-${wallet}`,
           recipient: wallet,
           text,
         });
       }
 
       directMessages.push({
+        id: `weekly-stats-${Date.now()}-dc-${farcasterId}`,
         farcasterId,
         text,
       });

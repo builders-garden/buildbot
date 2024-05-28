@@ -66,6 +66,7 @@ export const mentionsHandler = async (req: Request, res: Response) => {
   );
 
   const message: MessageBody = {
+    id: `${nominatorWallet}-${nominatedWallet}-${Date.now()}`,
     text: `@${nominatorUser[0].username} just nominated @${
       nominatedUser[0].username
     } with ${points.toFixed(2)} BUILD points`,

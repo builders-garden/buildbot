@@ -4,35 +4,31 @@ import { dcsQueue } from "../../queues/dcs.js";
 import { xmtpQueue } from "../../queues/xmtp.js";
 
 export const metricsHandler = async (_: Request, res: Response) => {
-  const [
-    castsCompleted,
-    castsFailed,
-    dcsCompleted,
-    dcsFailed,
-    xmtpCompleted,
-    xmtpFailed,
-  ] = await Promise.all([
-    castsQueue?.getMetrics("completed"),
+  const [castsFailed, dcsFailed, xmtpFailed] = await Promise.all([
     castsQueue?.getMetrics("failed"),
-    dcsQueue?.getMetrics("completed"),
     dcsQueue?.getMetrics("failed"),
-    xmtpQueue?.getMetrics("completed"),
     xmtpQueue?.getMetrics("failed"),
   ]);
 
   res.status(200).send({
     result: {
       casts: {
-        completed: castsCompleted,
-        failed: castsFailed,
+        completed: castsFailed!.meta.count - castsFailed!.count,
+        failed: castsFailed?.count,
+        failedJobs: castsFailed?.data,
+        performance: 100 - (castsFailed!.count / castsFailed!.meta.count) * 100,
       },
       dcs: {
-        completed: dcsCompleted,
-        failed: dcsFailed,
+        completed: dcsFailed!.meta.count - dcsFailed!.count,
+        failed: dcsFailed?.count,
+        failedJobs: dcsFailed?.data,
+        performance: 100 - (dcsFailed!.count / dcsFailed!.meta.count) * 100,
       },
       xmtp: {
-        completed: xmtpCompleted,
-        failed: xmtpFailed,
+        completed: xmtpFailed!.meta.count - xmtpFailed!.count,
+        failed: xmtpFailed?.count,
+        failedJobs: dcsFailed?.data,
+        performance: 100 - (xmtpFailed!.count / xmtpFailed!.meta.count) * 100,
       },
     },
   });
