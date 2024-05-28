@@ -1,6 +1,6 @@
 import { NeynarAPIClient } from "@neynar/nodejs-sdk";
 import { env } from "../env.js";
-import { EmbeddedCast } from "@neynar/nodejs-sdk/build/neynar-api/v2";
+import { EmbeddedCast, User } from "@neynar/nodejs-sdk/build/neynar-api/v2";
 import ky from "ky";
 import { v4 as uuidv4 } from "uuid";
 
@@ -74,12 +74,18 @@ export const getAddressFromUsername = async (username: string) => {
  * @param {string[]} addresses the ethereum addresses to lookup
  * @returns list of farcaster users
  */
-export const getFarcasterUsersByAddresses = async (addresses: string[]) => {
+export const getFarcasterUsersByAddresses = async (
+  addresses: string[]
+): Promise<{ [key: string]: User[] | undefined }> => {
   try {
-    await client.fetchBulkUsersByEthereumAddress(addresses);
+    return await client.fetchBulkUsersByEthereumAddress(addresses);
   } catch (error) {
     console.log(`error when calling neynar for addresses: ${addresses}`);
-    return {};
+    const users: { [key: string]: User[] | undefined } = {};
+    addresses.forEach((address) => {
+      users[address] = undefined;
+    });
+    return users;
   }
 };
 
