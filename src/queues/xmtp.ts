@@ -1,4 +1,4 @@
-import { Queue, Worker } from "bullmq";
+import { MetricsTime, Queue, Worker } from "bullmq";
 import { sendXMTPMessage } from "../utils/index.js";
 import { MessageWithRecipientBody } from "../schemas.js";
 import { env } from "../env.js";
@@ -30,8 +30,9 @@ if (env.REDIS_HOST) {
   // @ts-ignore
   const xmtpWorker = new Worker(XMTP_QUEUE_NAME, processXMTPMessage, {
     connection: redisConnection,
-    removeOnFail: { count: 0 },
-    removeOnComplete: { count: 0 },
+    metrics: {
+      maxDataPoints: MetricsTime.ONE_WEEK,
+    },
   });
 }
 

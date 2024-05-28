@@ -1,4 +1,4 @@
-import { Queue, Worker } from "bullmq";
+import { MetricsTime, Queue, Worker } from "bullmq";
 import { sendDirectCast } from "../utils/index.js";
 import { MessageWithFarcasterIdBody } from "../schemas.js";
 import { env } from "../env.js";
@@ -24,8 +24,9 @@ if (env.REDIS_HOST) {
   // @ts-ignore
   const dcsWorker = new Worker(DCS_QUEUE_NAME, processDC, {
     connection: redisConnection,
-    removeOnFail: { count: 0 },
-    removeOnComplete: { count: 0 },
+    metrics: {
+      maxDataPoints: MetricsTime.ONE_WEEK,
+    },
   });
 }
 

@@ -1,4 +1,4 @@
-import { Queue, Worker } from "bullmq";
+import { MetricsTime, Queue, Worker } from "bullmq";
 import { MessageBody } from "../schemas.js";
 import { publishCast } from "../utils/index.js";
 import { env } from "../env.js";
@@ -28,8 +28,9 @@ if (env.REDIS_HOST) {
   // @ts-ignore
   const castsWorker = new Worker(CASTS_QUEUE_NAME, processCast, {
     connection: redisConnection,
-    removeOnFail: { count: 0 },
-    removeOnComplete: { count: 0 },
+    metrics: {
+      maxDataPoints: MetricsTime.ONE_WEEK,
+    },
   });
 }
 

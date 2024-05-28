@@ -1,8 +1,8 @@
 import express from "express";
 import { mentionsHandler } from "./mentions.js";
-import { mentionsSchema } from "../schemas.js";
-import { webhookKeyMiddleware } from "../middlewares.js";
-import { validateSchema } from "../validators.js";
+import { mentionsSchema } from "../../schemas.js";
+import { webhookKeyMiddleware } from "../../middlewares.js";
+import { validateSchema } from "../../validators.js";
 
 const webhooksRouter = express.Router();
 
@@ -13,4 +13,4 @@ webhooksRouter.post(
   mentionsHandler
 );
 
-export default webhooksRouter;
+export { webhooksRouter };
