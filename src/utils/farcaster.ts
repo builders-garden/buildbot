@@ -36,7 +36,7 @@ export const sendDirectCast = async (recipient: number, text: string) => {
   const {
     result: { success },
   } = await ky
-    .post("https://api.warpcast.com/v2/ext-send-direct-cast", {
+    .put("https://api.warpcast.com/v2/ext-send-direct-cast", {
       headers: {
         Authorization: `Bearer ${env.FARCASTER_API_KEY}`,
         "Content-Type": "application/json",
