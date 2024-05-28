@@ -15,7 +15,7 @@ const client = new NeynarAPIClient(env.FARCASTER_API_KEY as string);
  */
 export const publishCast = async (
   text: string,
-  options?: { embeds?: EmbeddedCast[]; channelId?: string, replyTo?: string}
+  options?: { embeds?: EmbeddedCast[]; channelId?: string; replyTo?: string }
 ) => {
   const { hash } = await client.publishCast(SIGNER_UUID, text, options);
 
@@ -74,8 +74,14 @@ export const getAddressFromUsername = async (username: string) => {
  * @param {string[]} addresses the ethereum addresses to lookup
  * @returns list of farcaster users
  */
-export const getFarcasterUsersByAddresses = async (addresses: string[]) =>
-  await client.fetchBulkUsersByEthereumAddress(addresses);
+export const getFarcasterUsersByAddresses = async (addresses: string[]) => {
+  try {
+    await client.fetchBulkUsersByEthereumAddress(addresses);
+  } catch (error) {
+    console.log(`error when calling neynar for addresses: ${addresses}`);
+    return {};
+  }
+};
 
 /**
  * @dev this function returns the usernames from farcaster ids
