@@ -39,7 +39,7 @@ if (env.REDIS_HOST) {
           console.log(
             `[casts worker] [${Date.now()}] - rate limited, trying later.`
           );
-          await castsWorker.rateLimit(1000 * 60);
+          await castsWorker.rateLimit(1000 * 5);
           throw Worker.RateLimitError();
         }
       }
