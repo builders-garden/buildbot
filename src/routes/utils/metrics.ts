@@ -15,19 +15,16 @@ export const metricsHandler = async (_: Request, res: Response) => {
       casts: {
         completed: castsFailed!.meta.count - castsFailed!.count,
         failed: castsFailed?.count,
-        failedJobs: castsFailed?.data,
         performance: 100 - (castsFailed!.count / castsFailed!.meta.count) * 100,
       },
       dcs: {
         completed: dcsFailed!.meta.count - dcsFailed!.count,
         failed: dcsFailed?.count,
-        failedJobs: dcsFailed?.data,
         performance: 100 - (dcsFailed!.count / dcsFailed!.meta.count) * 100,
       },
       xmtp: {
         completed: xmtpFailed!.meta.count - xmtpFailed!.count,
         failed: xmtpFailed?.count,
-        failedJobs: dcsFailed?.data,
         performance: 100 - (xmtpFailed!.count / xmtpFailed!.meta.count) * 100,
       },
     },
