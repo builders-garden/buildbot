@@ -39,6 +39,12 @@ export const mentionsHandler = async (req: Request, res: Response) => {
     return;
   }
 
+  const nominatedUsername = nominatedUser[0].username;
+  const nominatorUsername = nominatorUser[0].username;
+  console.log(
+    `[mentionsHandler] - to ${nominatedUsername} from ${nominatorUsername}`
+  );
+
   const message: MessageBody = {
     text: `@${nominatorUser[0].username} just nominated @${
       nominatedUser[0].username
