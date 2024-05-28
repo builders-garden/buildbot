@@ -102,3 +102,20 @@ export const getUsernamesFromIds = async (farcasterIds: number[]) => {
 
   return { nominator: nominator!.username, nominee: nominee!.username };
 };
+
+/**
+ * @dev this function returns true if the input address is the custody address or a verified address of the user
+ * @param {User} user neynar user
+ * @param {string} inputAddress address coming from build
+ * @returns true if the user is correct, false otherwise
+ */
+export const isCorrectUser = (user: User, inputAddress: string) => {
+  if (user.custody_address.toLowerCase() === inputAddress.toLowerCase()) {
+    return true;
+  }
+
+  const hasVerifiedAddress = user.verified_addresses.eth_addresses.some(
+    (a: string) => a.toLowerCase() === inputAddress.toLowerCase()
+  );
+  return hasVerifiedAddress;
+};

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { MentionsBody, MessageBody } from "../schemas.js";
-import { getFarcasterUsersByAddresses } from "../utils/index.js";
+import { getFarcasterUsersByAddresses, isCorrectUser } from "../utils/index.js";
 import { addToCastsQueue } from "../queues/index.js";
 
 /**
@@ -41,6 +41,23 @@ export const mentionsHandler = async (req: Request, res: Response) => {
 
   const nominatedUsername = nominatedUser[0].username;
   const nominatorUsername = nominatorUser[0].username;
+
+  if (!isCorrectUser(nominatedUser[0], nominatedWallet)) {
+    console.error(
+      `[/webhooks/mentions] [${Date.now()}] - nominated user mismatch: ${nominatedUsername} does not match ${nominatedWallet}.`
+    );
+    res.status(200).send({ status: "nok" });
+    return;
+  }
+
+  if (!isCorrectUser(nominatorUser[0], nominatorWallet)) {
+    console.error(
+      `[/webhooks/mentions] [${Date.now()}] - nominator user mismatch: ${nominatorUsername} does not match ${nominatorWallet}.`
+    );
+    res.status(200).send({ status: "nok" });
+    return;
+  }
+
   console.log(
     `[/webhooks/mentions] - from ${nominatorUsername} [${nominatorWallet}] to ${nominatedUsername} [${nominatedWallet}]`
   );
