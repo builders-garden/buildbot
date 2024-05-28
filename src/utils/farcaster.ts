@@ -78,7 +78,19 @@ export const getFarcasterUsersByAddresses = async (
   addresses: string[]
 ): Promise<{ [key: string]: User[] | undefined }> => {
   try {
-    return await client.fetchBulkUsersByEthereumAddress(addresses);
+    return await ky
+      .get(
+        `https://api.neynar.com/v2/farcaster/user/bulk-by-address?addresses=${addresses
+          .map((a: string) => a.trim().toLowerCase())
+          .join(",")}`,
+        {
+          headers: {
+            accept: "application/json",
+            api_key: env.FARCASTER_API_KEY,
+          },
+        }
+      )
+      .json<{ [key: string]: User[] }>();
   } catch (error) {
     console.log(`error when calling neynar for addresses: ${addresses}`);
     const users: { [key: string]: User[] | undefined } = {};
