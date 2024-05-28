@@ -10,6 +10,7 @@ const apiLimiter = slowDown({
   windowMs: 60 * 1000, // 1 minute
   delayAfter: 200, // Allow only 200 requests per minute to go at full speed.
   delayMs: (_) => 1000, // Slow down each request after the limit by 1 second.
+  validate: { xForwardedForHeader: false },
 });
 
 app.use(express.json({ limit: "10mb" }));
