@@ -25,7 +25,7 @@ export const mentionsHandler = async (req: Request, res: Response) => {
 
   if (!nominatedUser) {
     console.error(
-      `[mentionsHandler] [${Date.now()}] - ${nominatedWallet} not found in farcaster.`
+      `[/webhooks/mentions] [${Date.now()}] - ${nominatedWallet} not found in farcaster.`
     );
     res.status(200).send({ status: "nok" });
     return;
@@ -33,7 +33,7 @@ export const mentionsHandler = async (req: Request, res: Response) => {
 
   if (!nominatorUser) {
     console.error(
-      `[mentionsHandler] [${Date.now()}] - ${nominatorWallet} not found in farcaster.`
+      `[/webhooks/mentions] [${Date.now()}] - ${nominatorWallet} not found in farcaster.`
     );
     res.status(200).send({ status: "nok" });
     return;
@@ -42,7 +42,7 @@ export const mentionsHandler = async (req: Request, res: Response) => {
   const nominatedUsername = nominatedUser[0].username;
   const nominatorUsername = nominatorUser[0].username;
   console.log(
-    `[mentionsHandler] - to ${nominatedUsername} from ${nominatorUsername}`
+    `[/webhooks/mentions] - from ${nominatorUsername} [${nominatorWallet}] to ${nominatedUsername} [${nominatedWallet}]`
   );
 
   const message: MessageBody = {
