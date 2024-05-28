@@ -28,6 +28,8 @@ if (env.REDIS_HOST) {
   // @ts-ignore
   const castsWorker = new Worker(CASTS_QUEUE_NAME, processCast, {
     connection: redisConnection,
+    removeOnFail: { count: 0 },
+    removeOnComplete: { count: 0 },
   });
 }
 

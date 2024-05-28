@@ -30,6 +30,8 @@ if (env.REDIS_HOST) {
   // @ts-ignore
   const xmtpWorker = new Worker(XMTP_QUEUE_NAME, processXMTPMessage, {
     connection: redisConnection,
+    removeOnFail: { count: 0 },
+    removeOnComplete: { count: 0 },
   });
 }
 
