@@ -32,20 +32,16 @@ if (env.REDIS_HOST) {
       try {
         await processCast(job);
       } catch (error) {
-        if (error instanceof AxiosError) {
-          if (error.response?.status === 429) {
-            console.log(
-              `[casts worker] [${Date.now()}] - rate limited, trying later.`
-            );
-            await castsWorker.rateLimit(1000);
-            throw Worker.RateLimitError();
-          }
+        if (
+          (error instanceof AxiosError && error.response?.status === 429) ||
+          (error instanceof Error && error.message.includes("429"))
+        ) {
+          console.log(
+            `[casts worker] [${Date.now()}] - rate limited, trying later.`
+          );
+          await castsWorker.rateLimit(1000 * 60);
+          throw Worker.RateLimitError();
         }
-        console.error(
-          `[casts worker] [${Date.now()}] - error publishing cast: ${
-            error instanceof Error ? error.message : "unknown error"
-          }.`
-        );
       }
     },
     {
