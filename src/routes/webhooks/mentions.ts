@@ -18,6 +18,14 @@ export const mentionsHandler = async (req: Request, res: Response) => {
     `[/webhooks/mentions] [${Date.now()}] - new mention received - [nominator: ${nominatorWallet}] - [nominated: ${nominatedWallet}] - [points: ${points}].`
   );
 
+  if (points < 2000) {
+    console.error(
+      `[/webhooks/mentions] [${Date.now()}] - points below minimum threshold.`
+    );
+    res.status(200).send({ status: "nok" });
+    return;
+  }
+
   const users = await getFarcasterUsersByAddresses([
     nominatedWallet,
     nominatorWallet,
