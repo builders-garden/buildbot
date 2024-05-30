@@ -19,6 +19,7 @@ export const processCast = async (job: { data: MessageBody }) => {
   const hash = await publishCast(text, {
     replyTo: env.FARCASTER_REPLY_TO_CAST_HASH,
   });
+
   console.log(
     `[casts worker] [${Date.now()}] - cast ${hash} published successfully .`
   );
@@ -44,7 +45,6 @@ if (env.REDIS_HOST) {
               error.message
             }.`
           );
-          throw error;
         }
       }
     },
@@ -55,7 +55,7 @@ if (env.REDIS_HOST) {
       },
       limiter: {
         max: 1,
-        duration: 10000,
+        duration: 1000 * 60,
       },
     }
   );
