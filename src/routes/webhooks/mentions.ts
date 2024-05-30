@@ -19,7 +19,7 @@ export const mentionsHandler = async (req: Request, res: Response) => {
   );
 
   if (points < 2000) {
-    console.error(
+    console.log(
       `[/webhooks/mentions] [${Date.now()}] - points below minimum threshold.`
     );
     res.status(200).send({ status: "nok" });
