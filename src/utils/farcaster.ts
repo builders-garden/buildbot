@@ -137,6 +137,10 @@ export const getUsernamesFromIds = async (farcasterIds: number[]) => {
  * @returns true if the user is correct, false otherwise
  */
 export const isCorrectUser = (user: User, inputAddress: string) => {
+  if (!user.custody_address || !user.verified_addresses) {
+    return false;
+  }
+
   if (user.custody_address.toLowerCase() === inputAddress.toLowerCase()) {
     return true;
   }
