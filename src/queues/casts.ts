@@ -32,10 +32,7 @@ if (env.REDIS_HOST) {
       try {
         await processCast(job);
       } catch (error) {
-        if (
-          (error instanceof AxiosError && error.response?.status === 429) ||
-          (error instanceof Error && error.message.includes("429"))
-        ) {
+        if (error instanceof AxiosError && error.response?.status === 429) {
           console.log(
             `[casts worker] [${Date.now()}] - rate limited, trying later.`
           );
