@@ -7,6 +7,20 @@ import { v4 as uuidv4 } from "uuid";
 const SIGNER_UUID = env.FARCASTER_SIGNER_UUID as string;
 const client = new NeynarAPIClient(env.FARCASTER_API_KEY as string);
 
+export const setupWebhook = async () => {
+  return await client.publishWebhook(
+    "builbot-nominations-webhook",
+    `https://buildbot-api.talentprotocol.com/api/webhooks/nominations`,
+    {
+      subscription: {
+        "cast.created": {
+          mentioned_fids: [531162],
+        },
+      },
+    }
+  );
+};
+
 /**
  * @dev this function publishes a cast to the given farcaster channel
  * @param {string} text the text of the cast to publish

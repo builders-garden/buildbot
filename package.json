@@ -11,7 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@neynar/nodejs-sdk": "^1.23.1",
+    "@neynar/nodejs-sdk": "^1.27.0",
     "@xmtp/grpc-api-client": "^0.2.7",
     "@xmtp/xmtp-js": "^11.6.2",
     "axios": "^1.7.2",

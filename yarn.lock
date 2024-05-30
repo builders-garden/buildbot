@@ -450,10 +450,10 @@
     path-to-regexp "3.2.0"
     tslib "2.6.2"
 
-"@neynar/nodejs-sdk@^1.23.1":
-  version "1.23.1"
-  resolved "https://registry.yarnpkg.com/@neynar/nodejs-sdk/-/nodejs-sdk-1.23.1.tgz#bc9e0a7795f52c211a063f9ee1ccc8c81d162fcd"
-  integrity sha512-k2hx9gJUhnFWF+oaGRCMFy4DlqksONas3vzl++qc0qVrUXl+ahX03UmCly/iB+HlEZo26zTD1TJxJVI6Wj078A==
+"@neynar/nodejs-sdk@^1.27.0":
+  version "1.27.0"
+  resolved "https://registry.yarnpkg.com/@neynar/nodejs-sdk/-/nodejs-sdk-1.27.0.tgz#405bd7c69a76e02fee417368f56a7bc4c114bc51"
+  integrity sha512-NIHttc1H2SC3mdms1xp65oD7xIwtXFsdZjrhH3K3CilhQZuA9qm9Npxl5Q2AMEhBacrBVvkib00PzRjgWMz+Tg==
   dependencies:
     "@openapitools/openapi-generator-cli" "^2.7.0"
     axios "^1.6.2"

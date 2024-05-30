@@ -1,5 +1,6 @@
 import express from "express";
 import { mentionsHandler } from "./mentions.js";
+import { nominationsHandler } from "./nominations.js";
 import { mentionsSchema } from "../../schemas.js";
 import { webhookKeyMiddleware } from "../../middlewares.js";
 import { validateSchema } from "../../validators.js";
@@ -12,5 +13,7 @@ webhooksRouter.post(
   validateSchema(mentionsSchema),
   mentionsHandler
 );
+
+webhooksRouter.post("/nominations", nominationsHandler);
 
 export { webhooksRouter };

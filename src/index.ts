@@ -3,6 +3,7 @@ import express from "express";
 import { utilsRouter, webhooksRouter } from "./routes/index.js";
 import { startJobs } from "./jobs/index.js";
 import slowDown from "express-slow-down";
+import { setupWebhook } from "./utils/farcaster.js";
 
 export const app = express();
 
@@ -18,7 +19,9 @@ app.use(apiLimiter);
 app.use("/", utilsRouter);
 app.use("/webhooks", webhooksRouter);
 
-app.listen(env.PORT, () => {
+app.listen(env.PORT, async () => {
   console.log(`⚡️ buildbot running on port ${env.PORT}`);
   startJobs();
+  await setupWebhook();
+  console.log(`🎣 neynar webhook setup complete.`);
 });
