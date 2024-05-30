@@ -38,6 +38,13 @@ if (env.REDIS_HOST) {
           );
           await castsWorker.rateLimit(1000 * 5);
           throw Worker.RateLimitError();
+        } else if (error instanceof Error) {
+          console.error(
+            `[casts worker] [${Date.now()}] - error processing cast: ${
+              error.message
+            }.`
+          );
+          throw error;
         }
       }
     },
