@@ -16,13 +16,13 @@ export const processCast = async (job: { data: MessageBody }) => {
 
   console.log(`[casts worker] [${Date.now()}] - new cast received. iterating.`);
 
-  const hash = await publishCast(text, {
+  /*const hash = await publishCast(text, {
     replyTo: env.FARCASTER_REPLY_TO_CAST_HASH,
   });
 
   console.log(
     `[casts worker] [${Date.now()}] - cast ${hash} published successfully .`
-  );
+  );*/
 };
 
 if (env.REDIS_HOST) {
