@@ -1,6 +1,5 @@
 import { MetricsTime, Queue, Worker } from "bullmq";
 import { MessageBody } from "../schemas.js";
-import { publishCast } from "../utils/index.js";
 import { env } from "../env.js";
 import { redisConnection } from "./connection.js";
 import { AxiosError } from "axios";
