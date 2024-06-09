@@ -11,6 +11,7 @@ const CASTS_QUEUE_NAME = "casts";
  * @param job the job to process
  */
 export const processCast = async (job: { data: MessageBody }) => {
+  // @ts-ignore
   const { text }: MessageBody = job.data;
 
   console.log(`[casts worker] [${Date.now()}] - new cast received. iterating.`);
