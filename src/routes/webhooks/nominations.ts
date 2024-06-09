@@ -38,8 +38,8 @@ export const nominationsHandler = async (req: Request, res: Response) => {
     console.error(
       `[/webhooks/nominations] [${Date.now()}] - no data received.`
     );
-    res.status(200).send({ status: "nok" });
-    return;
+
+    return res.status(200).send({ status: "nok" });
   }
 
   const {
@@ -58,8 +58,8 @@ export const nominationsHandler = async (req: Request, res: Response) => {
       console.error(
         `[/webhooks/nominations] [${Date.now()}] - parent cast [${parentHash}] not found.`
       );
-      res.status(200).send({ status: "nok" });
-      return;
+
+      return res.status(200).send({ status: "nok" });
     }
 
     const walletToNominate =
@@ -81,8 +81,7 @@ export const nominationsHandler = async (req: Request, res: Response) => {
     console.error(
       `[/webhooks/nominations] [${Date.now()}] - no valid profiles mentioned.`
     );
-    res.status(200).send({ status: "nok" });
-    return;
+    return res.status(200).send({ status: "nok" });
   }
 
   const mentionedProfile = notBotProfiles[0];
@@ -93,5 +92,5 @@ export const nominationsHandler = async (req: Request, res: Response) => {
     return res.status(200).send({ status: "ok" });
   }
 
-  res.status(200).send({ status: "nok" });
+  return res.status(200).send({ status: "nok" });
 };
