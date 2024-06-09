@@ -4,7 +4,7 @@ import {
   CastParamType,
   EmbeddedCast,
   User,
-} from "@neynar/nodejs-sdk/build/neynar-api/v2";
+} from "@neynar/nodejs-sdk/build/neynar-api/v2/index.js";
 import ky from "ky";
 import { v4 as uuidv4 } from "uuid";
 
