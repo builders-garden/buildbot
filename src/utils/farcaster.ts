@@ -1,6 +1,10 @@
 import { NeynarAPIClient } from "@neynar/nodejs-sdk";
 import { env } from "../env.js";
-import { EmbeddedCast, User } from "@neynar/nodejs-sdk/build/neynar-api/v2";
+import {
+  CastParamType,
+  EmbeddedCast,
+  User,
+} from "@neynar/nodejs-sdk/build/neynar-api/v2";
 import ky from "ky";
 import { v4 as uuidv4 } from "uuid";
 
@@ -149,4 +153,16 @@ export const isCorrectUser = (user: User, inputAddress: string) => {
     (a: string) => a.toLowerCase() === inputAddress.toLowerCase()
   );
   return hasVerifiedAddress;
+};
+
+/**
+ * @dev this function returns the cast from a hash
+ * @param {string} castHash the hash of the cast
+ * @returns farcaster cast with the given hash, or undefined
+ */
+export const getCastFromHash = async (castHash: string) => {
+  return await client.lookUpCastByHashOrWarpcastUrl(
+    castHash,
+    CastParamType.Hash
+  );
 };
