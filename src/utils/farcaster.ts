@@ -10,7 +10,7 @@ const client = new NeynarAPIClient(env.FARCASTER_API_KEY as string);
 export const setupWebhook = async () => {
   return await client.publishWebhook(
     "builbot-nominations-webhook",
-    `https://buildbot-api.talentprotocol.com/api/webhooks/nominations`,
+    `https://buildbot-api.talentprotocol.com/webhooks/nominations`,
     {
       subscription: {
         "cast.created": {
