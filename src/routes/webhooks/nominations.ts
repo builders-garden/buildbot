@@ -45,6 +45,7 @@ export const nominationsHandler = async (req: Request, res: Response) => {
   const {
     parent_hash: parentHash,
     author,
+    text,
     mentioned_profiles: mentionedProfiles,
   } = data;
 
@@ -59,6 +60,10 @@ export const nominationsHandler = async (req: Request, res: Response) => {
         `[/webhooks/nominations] [${Date.now()}] - parent cast [${parentHash}] not found.`
       );
 
+      return res.status(200).send({ status: "nok" });
+    }
+
+    if (!text.includes("nominate") && !text.includes("nom")) {
       return res.status(200).send({ status: "nok" });
     }
 
