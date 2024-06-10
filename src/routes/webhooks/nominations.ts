@@ -85,7 +85,7 @@ export const nominationsHandler = async (req: Request, res: Response) => {
     (profile: { fid: number }) => profile.fid !== 531162
   );
 
-  if (notBotProfiles.lenght === 0) {
+  if (!notBotProfiles || notBotProfiles?.length === 0) {
     console.error(
       `[/webhooks/nominations] [${Date.now()}] - no valid profiles mentioned.`
     );
