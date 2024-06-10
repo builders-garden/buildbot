@@ -75,7 +75,6 @@ export const nominationsHandler = async (req: Request, res: Response) => {
 
     if (walletToNominate && originWallet) {
       await createNomination(originWallet, walletToNominate);
-      // publish cast to confirm
       return res.status(200).send({ status: "ok" });
     }
 
@@ -98,7 +97,6 @@ export const nominationsHandler = async (req: Request, res: Response) => {
 
   if (originWallet && walletToNominate) {
     await createNomination(originWallet, walletToNominate);
-    //
     return res.status(200).send({ status: "ok" });
   }
 
