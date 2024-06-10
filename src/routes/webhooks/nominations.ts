@@ -49,6 +49,10 @@ export const nominationsHandler = async (req: Request, res: Response) => {
     mentioned_profiles: mentionedProfiles,
   } = data;
 
+  if (!text.includes("nominate") && !text.includes("nom")) {
+    return res.status(200).send({ status: "nok" });
+  }
+
   const originWallet =
     author.verified_addresses?.length > 0
       ? author.verified_addresses?.eth_addresses[0]
@@ -66,15 +70,12 @@ export const nominationsHandler = async (req: Request, res: Response) => {
       return res.status(200).send({ status: "nok" });
     }
 
-    if (!text.includes("nominate") && !text.includes("nom")) {
-      return res.status(200).send({ status: "nok" });
-    }
-
     const walletToNominate =
       parentCast.cast.author.verified_addresses.eth_addresses[0];
 
     if (walletToNominate && originWallet) {
       await createNomination(originWallet, walletToNominate);
+      // publish cast to confirm
       return res.status(200).send({ status: "ok" });
     }
 
@@ -97,6 +98,7 @@ export const nominationsHandler = async (req: Request, res: Response) => {
 
   if (originWallet && walletToNominate) {
     await createNomination(originWallet, walletToNominate);
+    //
     return res.status(200).send({ status: "ok" });
   }
 
