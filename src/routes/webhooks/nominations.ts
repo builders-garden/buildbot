@@ -49,7 +49,10 @@ export const nominationsHandler = async (req: Request, res: Response) => {
     mentioned_profiles: mentionedProfiles,
   } = data;
 
-  const originWallet = author.verified_addresses.eth_addresses[0];
+  const originWallet =
+    author.verified_addresses?.length > 0
+      ? author.verified_addresses?.eth_addresses[0]
+      : author.custody_address;
 
   if (parentHash) {
     // check the parent cast and get its caster as the nominated user
