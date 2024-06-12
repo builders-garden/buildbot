@@ -1,5 +1,5 @@
 import {
-  MessageBody,
+  SimpleCastBody,
   MessageWithFarcasterIdBody,
   MessageWithRecipientBody,
 } from "../schemas.js";
@@ -11,7 +11,7 @@ const CASTS_JOB_NAME = "create-cast";
 const DCS_JOB_NAME = "create-dc";
 const XMTP_JOB_NAME = "send-xmtp-message";
 
-export const addToCastsQueue = async (data: MessageBody) => {
+export const addToCastsQueue = async (data: SimpleCastBody) => {
   if (castsQueue) {
     await castsQueue.add(`${CASTS_JOB_NAME}-${data.id}`, data, {
       attempts: 1,

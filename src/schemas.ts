@@ -8,12 +8,12 @@ export const mentionsSchema = z.object({
 
 export type MentionsBody = z.infer<typeof mentionsSchema>;
 
-export const messageSchema = z.object({
+export const simpleCastSchema = z.object({
   text: z.string().min(1),
   id: z.string().min(1),
 });
 
-export type MessageBody = z.infer<typeof messageSchema>;
+export type SimpleCastBody = z.infer<typeof simpleCastSchema>;
 
 export const messageWithRecipientSchema = z.object({
   text: z.string().min(1),
@@ -58,3 +58,12 @@ export const weeklyStatsSchema = z.array(
 );
 
 export type WeeklyStatsBody = z.infer<typeof weeklyStatsSchema>;
+
+export const messageSchema = z.object({
+  text: z.string().min(1),
+  sender: z.string().min(1),
+  receiver: z.union([z.string().min(1), z.number()]),
+  channels: z.array(z.string()).default([]),
+});
+
+export type MessageBody = z.infer<typeof messageSchema>;

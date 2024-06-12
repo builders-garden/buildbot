@@ -56,7 +56,7 @@ export const sendDirectCast = async (recipient: number, text: string) => {
   } = await ky
     .put("https://api.warpcast.com/v2/ext-send-direct-cast", {
       headers: {
-        Authorization: `Bearer ${env.FARCASTER_API_KEY}`,
+        Authorization: `Bearer ${env.WARPCAST_API_KEY}`,
         "Content-Type": "application/json",
       },
       json: {
@@ -118,6 +118,19 @@ export const getFarcasterUsersByAddresses = async (
     });
     return users;
   }
+};
+
+/**
+ * @dev this function returns a farcaster user by their farcaster id
+ * @param {number} fid the farcaster id to lookup
+ * @returns {Promise<User | undefined>} the user with the given farcaster id, or undefined
+ */
+export const getFarcasterUsersByFid = async (fid: number) => {
+  const { users } = await client.fetchBulkUsers([fid]);
+  if (users.length === 0) {
+    return undefined;
+  }
+  return users[0];
 };
 
 /**

@@ -14,10 +14,12 @@ export const processDC = async (job: { data: MessageWithFarcasterIdBody }) => {
   const { text, farcasterId } = job.data;
 
   console.log(`[dcs worker] [${Date.now()}] - new dc received. iterating.`);
-
-  await sendDirectCast(farcasterId, text);
-
-  console.log(`[dcs worker] [${Date.now()}] - dc sent successfully.`);
+  try {
+    await sendDirectCast(farcasterId, text);
+    console.log(`[dcs worker] [${Date.now()}] - dc sent successfully.`);
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 if (env.REDIS_HOST) {
