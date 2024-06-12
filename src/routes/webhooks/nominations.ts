@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import ky from "ky";
 import { getCastFromHash } from "../../utils/farcaster.js";
 import { addToRepliesQueue } from "../../queues/index.js";
+import { env } from "../../env.js";
 
 type Nomination = {
   id: number;
@@ -35,6 +36,9 @@ const createNomination = async (
   // send the request to the build API
   try {
     const result = await ky.post("https://build.top/api/nominations", {
+      headers: {
+        "x-api-key": env.WEBHOOK_KEY,
+      },
       json: {
         walletToNominate,
         originWallet,

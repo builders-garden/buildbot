@@ -35,7 +35,6 @@ const envSchema = z.object({
   // new env variables
   BUILDBOT_WEBHOOK_NAME: z.string().trim().min(1),
   BUILDBOT_WEBHOOK_TARGET_URL: z.string().url().trim().min(1),
-  BUILD_API_KEY: z.string().trim().min(1),
 });
 
 const { data, success, error } = envSchema.safeParse(process.env);
