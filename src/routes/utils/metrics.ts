@@ -12,21 +12,29 @@ export const metricsHandler = async (_: Request, res: Response) => {
 
   res.status(200).send({
     result: {
-      casts: {
-        completed: castsFailed!.meta.count - castsFailed!.count,
-        failed: castsFailed?.count,
-        performance: 100 - (castsFailed!.count / castsFailed!.meta.count) * 100,
-      },
-      dcs: {
-        completed: dcsFailed!.meta.count - dcsFailed!.count,
-        failed: dcsFailed?.count,
-        performance: 100 - (dcsFailed!.count / dcsFailed!.meta.count) * 100,
-      },
-      xmtp: {
-        completed: xmtpFailed!.meta.count - xmtpFailed!.count,
-        failed: xmtpFailed?.count,
-        performance: 100 - (xmtpFailed!.count / xmtpFailed!.meta.count) * 100,
-      },
+      casts: castsFailed
+        ? {
+            completed: castsFailed!.meta.count - castsFailed!.count,
+            failed: castsFailed?.count,
+            performance:
+              100 - (castsFailed!.count / castsFailed!.meta.count) * 100,
+          }
+        : null,
+      dcs: dcsFailed
+        ? {
+            completed: dcsFailed!.meta.count - dcsFailed!.count,
+            failed: dcsFailed?.count,
+            performance: 100 - (dcsFailed!.count / dcsFailed!.meta.count) * 100,
+          }
+        : null,
+      xmtp: xmtpFailed
+        ? {
+            completed: xmtpFailed!.meta.count - xmtpFailed!.count,
+            failed: xmtpFailed?.count,
+            performance:
+              100 - (xmtpFailed!.count / xmtpFailed!.meta.count) * 100,
+          }
+        : null,
     },
   });
 };

@@ -12,18 +12,37 @@ import { TalentProtocolSender } from "../schemas.js";
 const SIGNER_UUID = env.FARCASTER_SIGNER_UUID as string;
 const client = new NeynarAPIClient(env.FARCASTER_API_KEY as string);
 
+const webhookName = env.BUILDBOT_WEBHOOK_NAME;
+const webhookUrl =
+  env.BUILDBOT_WEBHOOK_TARGET_BASE_URL + "/webhooks/nominations";
+const buildbotFid = env.BUILDBOT_FARCASTER_FID as number;
+
 export const setupWebhook = async () => {
-  return await client.publishWebhook(
-    "builbot-nominations-webhook",
-    `https://buildbot-api.talentprotocol.com/webhooks/nominations`,
-    {
-      subscription: {
-        "cast.created": {
-          mentioned_fids: [531162],
-        },
-      },
-    }
+  const createdWebhooks = await client.fetchWebhooks();
+  // check if a webhook with the same name already exists
+  const webhook = createdWebhooks.webhooks.find(
+    (webhook) =>
+      webhook.title === webhookName && webhook.target_url === webhookUrl
   );
+  if (webhook) {
+    console.log(
+      `webhook already exists, using webhook with id: ${webhook.webhook_id}`
+    );
+    return {
+      success: true,
+      message: "webhook already exists",
+      webhook,
+    };
+  }
+
+  console.log("webhook does not exist - creating new webhook");
+  return await client.publishWebhook(webhookName, webhookUrl, {
+    subscription: {
+      "cast.created": {
+        mentioned_fids: [buildbotFid],
+      },
+    },
+  });
 };
 
 /**

@@ -15,6 +15,14 @@ export const simpleCastSchema = z.object({
 
 export type SimpleCastBody = z.infer<typeof simpleCastSchema>;
 
+export const replySchema = z.object({
+  text: z.string().min(1),
+  id: z.string().min(1),
+  replyTo: z.string().min(1),
+});
+
+export type ReplyBody = z.infer<typeof replySchema>;
+
 export const messageWithRecipientSchema = z.object({
   text: z.string().min(1),
   id: z.string().min(1),

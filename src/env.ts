@@ -34,6 +34,12 @@ const envSchema = z.object({
   XMTP_PRIVATE_KEY: z.string().trim().min(1),
   BUILDBOT_WARPCAST_API_KEY: z.string(),
   TALENTBOT_WARPCAST_API_KEY: z.string(),
+  // new env variables
+  BUILDBOT_WEBHOOK_NAME: z.string().trim().min(1),
+  BUILDBOT_WEBHOOK_TARGET_BASE_URL: z.string().url().trim().min(1),
+  BUILDBOT_FARCASTER_FID: z
+    .string()
+    .transform((val) => (val ? parseInt(val) : undefined)),
 });
 
 const { data, success, error } = envSchema.safeParse(process.env);
