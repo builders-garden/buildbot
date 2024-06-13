@@ -11,8 +11,10 @@ import { v4 as uuidv4 } from "uuid";
 const SIGNER_UUID = env.FARCASTER_SIGNER_UUID as string;
 const client = new NeynarAPIClient(env.FARCASTER_API_KEY as string);
 
-const webhookName = env.BUILDBOT_WEBHOOK_NAME as string;
-const webhookUrl = env.BUILDBOT_WEBHOOK_TARGET_URL as string;
+const webhookName = env.BUILDBOT_WEBHOOK_NAME;
+const webhookUrl =
+  env.BUILDBOT_WEBHOOK_TARGET_BASE_URL + "/webhooks/nominations";
+const buildbotFid = env.BUILDBOT_FARCASTER_FID as number;
 
 export const setupWebhook = async () => {
   const createdWebhooks = await client.fetchWebhooks();
@@ -36,7 +38,7 @@ export const setupWebhook = async () => {
   return await client.publishWebhook(webhookName, webhookUrl, {
     subscription: {
       "cast.created": {
-        mentioned_fids: [531162],
+        mentioned_fids: [buildbotFid],
       },
     },
   });
