@@ -13,14 +13,14 @@ const XMTP_QUEUE_NAME = "xmtp";
 export const processXMTPMessage = async (job: {
   data: MessageWithRecipientBody;
 }) => {
-  const { text, recipient }: MessageWithRecipientBody = job.data;
+  const { text, recipient, sender }: MessageWithRecipientBody = job.data;
 
   console.log(
     `[xmtp worker] [${new Date().toISOString()}] - new xmtp message received. iterating.`
   );
 
   try {
-    await sendXMTPMessage(recipient, text);
+    await sendXMTPMessage(recipient, text, sender);
     console.log(
       `[xmtp worker] [${new Date().toISOString()}] - xmtp message sent successfully.`
     );

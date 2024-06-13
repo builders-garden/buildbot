@@ -1,5 +1,15 @@
 import z from "zod";
 
+export enum TalentProtocolSender {
+  BUILDBOT = "buildbot",
+  TALENTBOT = "talentbot",
+}
+
+export enum ChannelService {
+  FarcasterDC = "farcaster-dc",
+  XMTP = "xmtp",
+}
+
 export const mentionsSchema = z.object({
   nominatorWallet: z.string(),
   nominatedWallet: z.string(),
@@ -27,6 +37,7 @@ export const messageWithRecipientSchema = z.object({
   text: z.string().min(1),
   id: z.string().min(1),
   recipient: z.string().min(1),
+  sender: z.optional(z.nativeEnum(TalentProtocolSender)),
 });
 
 export type MessageWithRecipientBody = z.infer<
@@ -68,16 +79,6 @@ export const weeklyStatsSchema = z.array(
 
 export type WeeklyStatsBody = z.infer<typeof weeklyStatsSchema>;
 
-export enum TalentProtocolSender {
-  BUILDBOT = "buildbot",
-  TALENTBOT = "talentbot",
-}
-
-export enum ChannelService {
-  FarcasterDC = "farcaster-dc",
-  XMTP = "xmtp",
-}
-
 export const messageSchema = z.object({
   text: z.string().min(1),
   sender: z.nativeEnum(TalentProtocolSender),
@@ -86,3 +87,12 @@ export const messageSchema = z.object({
 });
 
 export type MessageBody = z.infer<typeof messageSchema>;
+
+export const subscriberSchema = z.object({
+  channel: z.nativeEnum(ChannelService),
+  fid: z.optional(z.number().int()),
+  address: z.optional(z.string()),
+  sender: z.nativeEnum(TalentProtocolSender),
+});
+
+export type SubscriberParams = z.infer<typeof subscriberSchema>;

@@ -3,14 +3,14 @@ import { mentionsHandler } from "./mentions.js";
 import { nominationsHandler } from "./nominations.js";
 import { mentionsSchema } from "../../schemas.js";
 import { webhookKeyMiddleware } from "../../middlewares.js";
-import { validateSchema } from "../../validators.js";
+import { validateBodySchema } from "../../validators.js";
 
 const webhooksRouter = express.Router();
 
 webhooksRouter.post(
   "/mentions",
   webhookKeyMiddleware,
-  validateSchema(mentionsSchema),
+  validateBodySchema(mentionsSchema),
   mentionsHandler
 );
 

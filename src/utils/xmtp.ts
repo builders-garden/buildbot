@@ -2,13 +2,27 @@ import { env } from "../env.js";
 import { Client } from "@xmtp/xmtp-js";
 import { GrpcApiClient } from "@xmtp/grpc-api-client";
 import { Wallet } from "ethers";
+import { TalentProtocolSender } from "../schemas.js";
 
 /**
  * @dev this function creates a new xmtp client
  * @returns {Client} the new xmtp client
  */
-const createXMTPClient = async () => {
-  const wallet = new Wallet(env.XMTP_PRIVATE_KEY);
+const createXMTPClient = async (
+  sender: TalentProtocolSender = TalentProtocolSender.BUILDBOT
+) => {
+  let wallet: Wallet;
+
+  switch (sender) {
+    case TalentProtocolSender.BUILDBOT:
+      wallet = new Wallet(env.BUILDBOT_XMTP_PRIVATE_KEY);
+      break;
+    case TalentProtocolSender.TALENTBOT:
+      wallet = new Wallet(env.TALENTBOT_XMTP_PRIVATE_KEY);
+      break;
+    default:
+      throw new Error(`sender ${sender} not supported.`);
+  }
 
   const client = await Client.create(wallet, {
     env: process.env.XMTP_ENV as any,
@@ -23,8 +37,12 @@ const createXMTPClient = async () => {
  * @param {string} recipient wallet address of the recipient
  * @param {string} text the text of the message to send
  */
-export const sendXMTPMessage = async (recipient: string, text: string) => {
-  const client = await createXMTPClient();
+export const sendXMTPMessage = async (
+  recipient: string,
+  text: string,
+  sender: TalentProtocolSender = TalentProtocolSender.BUILDBOT
+) => {
+  const client = await createXMTPClient(sender);
 
   const conversations = await client.conversations.list();
   const conversation = conversations.find((c) => c.peerAddress === recipient);

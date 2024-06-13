@@ -8,6 +8,7 @@ import {
 import ky from "ky";
 import { v4 as uuidv4 } from "uuid";
 import { TalentProtocolSender } from "../schemas.js";
+import { Logger } from "./logger.js";
 
 const SIGNER_UUID = env.FARCASTER_SIGNER_UUID as string;
 const client = new NeynarAPIClient(env.FARCASTER_API_KEY as string);
@@ -17,6 +18,8 @@ const webhookUrl =
   env.BUILDBOT_WEBHOOK_TARGET_BASE_URL + "/webhooks/nominations";
 const buildbotFid = env.BUILDBOT_FARCASTER_FID as number;
 
+const logger = new Logger("farcaster");
+
 export const setupWebhook = async () => {
   const createdWebhooks = await client.fetchWebhooks();
   // check if a webhook with the same name already exists
@@ -25,7 +28,7 @@ export const setupWebhook = async () => {
       webhook.title === webhookName && webhook.target_url === webhookUrl
   );
   if (webhook) {
-    console.log(
+    logger.log(
       `webhook already exists, using webhook with id: ${webhook.webhook_id}`
     );
     return {
@@ -35,7 +38,7 @@ export const setupWebhook = async () => {
     };
   }
 
-  console.log("webhook does not exist - creating new webhook");
+  logger.log("webhook does not exist - creating new webhook");
   return await client.publishWebhook(webhookName, webhookUrl, {
     subscription: {
       "cast.created": {
@@ -73,7 +76,7 @@ export const sendDirectCast = async (
   let apiKey: string | undefined;
   if (sender === TalentProtocolSender.BUILDBOT) {
     if (!env.BUILDBOT_WARPCAST_API_KEY) {
-      console.error(
+      logger.error(
         "No BUILDBOT_WARPCAST_API_KEY found, skipping direct cast send."
       );
       throw new Error("No BUILDBOT_WARPCAST_API_KEY found.");
@@ -83,7 +86,7 @@ export const sendDirectCast = async (
 
   if (sender === TalentProtocolSender.TALENTBOT) {
     if (!env.TALENTBOT_WARPCAST_API_KEY) {
-      console.error(
+      logger.error(
         "No TALENTBOT_WARPCAST_API_KEY found, skipping direct cast send."
       );
       throw new Error("No TALENTBOT_WARPCAST_API_KEY found.");
@@ -92,7 +95,7 @@ export const sendDirectCast = async (
   }
 
   if (apiKey === undefined) {
-    console.error("No API key found, skipping direct cast send.");
+    logger.error("No API key found, skipping direct cast send.");
     throw new Error("No API key found.");
   }
 
@@ -113,7 +116,7 @@ export const sendDirectCast = async (
     .json<{ result: { success: boolean } }>();
 
   if (!success) {
-    console.error(`error sending direct cast to ${recipient}.`);
+    logger.error(`error sending direct cast to ${recipient}.`);
   }
 };
 
@@ -156,7 +159,7 @@ export const getFarcasterUsersByAddresses = async (
     // .json<{ [key: string]: User[] }>();
     return await client.fetchBulkUsersByEthereumAddress(addresses);
   } catch (error) {
-    console.log(`error when calling neynar for addresses: ${addresses}`);
+    logger.log(`error when calling neynar for addresses: ${addresses}`);
     const users: { [key: string]: User[] | undefined } = {};
     addresses.forEach((address) => {
       users[address] = undefined;

@@ -1,12 +1,21 @@
 import express from "express";
 import { sendHandler } from "./send.js";
-import { validateSchema } from "../../validators.js";
-import { messageSchema } from "../../schemas.js";
-import { unsubscribeHandler } from "./unsubscribe.js";
+import { validateBodySchema } from "../../validators.js";
+import { messageSchema, subscriberSchema } from "../../schemas.js";
+import { subscribeHandler, unsubscribeHandler } from "./subscribe.js";
 
 const messagesRouter = express.Router();
 
-messagesRouter.post("/", validateSchema(messageSchema), sendHandler);
-messagesRouter.post("/unsubscribe", unsubscribeHandler);
+messagesRouter.post("/", validateBodySchema(messageSchema), sendHandler);
+messagesRouter.post(
+  "/subscribe",
+  validateBodySchema(subscriberSchema),
+  subscribeHandler
+);
+messagesRouter.post(
+  "/unsubscribe",
+  validateBodySchema(subscriberSchema),
+  unsubscribeHandler
+);
 
 export { messagesRouter };

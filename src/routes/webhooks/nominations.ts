@@ -3,6 +3,9 @@ import ky from "ky";
 import { getCastFromHash } from "../../utils/farcaster.js";
 import { addToRepliesQueue } from "../../queues/index.js";
 import { env } from "../../env.js";
+import { Logger } from "../../utils/logger.js";
+
+const logger = new Logger("nominationsHandler");
 
 type Nomination = {
   id: number;
@@ -94,16 +97,12 @@ export const nominationsHandler = async (req: Request, res: Response) => {
   try {
     const { body } = req;
 
-    console.log(
-      `[/webhooks/nominations] [${new Date().toISOString()}] - new nomination on fc received.`
-    );
+    logger.log(`new nomination on fc received.`);
 
     const { data } = body;
 
     if (!data) {
-      console.error(
-        `[/webhooks/nominations] [${new Date().toISOString()}] - no data received.`
-      );
+      logger.error(`no data received.`);
       return res.status(200).send({ status: "nok" });
     }
 
@@ -130,9 +129,7 @@ export const nominationsHandler = async (req: Request, res: Response) => {
       const parentCast = await getCastFromHash(parentHash);
 
       if (!parentCast) {
-        console.error(
-          `[/webhooks/nominations] [${new Date().toISOString()}] - parent cast [${parentHash}] not found.`
-        );
+        logger.error(`parent cast [${parentHash}] not found.`);
         replyWithError(hash);
         return res.status(200).send({ status: "nok" });
       }
@@ -169,9 +166,7 @@ export const nominationsHandler = async (req: Request, res: Response) => {
     );
 
     if (!notBotProfiles || notBotProfiles?.length === 0) {
-      console.error(
-        `[/webhooks/nominations] [${new Date().toISOString()}] - no valid profiles mentioned.`
-      );
+      logger.error(`no valid profiles mentioned.`);
       replyWithError(hash);
       return res.status(200).send({ status: "nok" });
     }
@@ -201,11 +196,7 @@ export const nominationsHandler = async (req: Request, res: Response) => {
     replyWithError(hash);
     return res.status(200).send({ status: "nok" });
   } catch (error: any) {
-    console.error(
-      `[/webhooks/nominations] [${new Date().toISOString()}] - error processing nomination: ${
-        error.message
-      }.`
-    );
+    logger.error(`error processing nomination: ${error.message}.`);
     return res.status(200).send({ status: "nok" });
   }
 };
