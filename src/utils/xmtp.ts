@@ -34,6 +34,10 @@ export const sendXMTPMessage = async (recipient: string, text: string) => {
     await conversation.send(text);
   } else {
     // create new conversation
+    const canMessage = await client.canMessage(recipient);
+    if (!canMessage) {
+      throw new Error(`${recipient} cannot be messaged.`);
+    }
     const newConversation = await client.conversations.newConversation(
       recipient
     );

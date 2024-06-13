@@ -29,6 +29,7 @@ export const messageWithFarcasterIdSchema = z.object({
   text: z.string().min(1),
   id: z.string().min(1),
   farcasterId: z.number(),
+  sender: z.optional(z.string()),
 });
 
 export type MessageWithFarcasterIdBody = z.infer<
@@ -59,11 +60,21 @@ export const weeklyStatsSchema = z.array(
 
 export type WeeklyStatsBody = z.infer<typeof weeklyStatsSchema>;
 
+export enum TalentProtocolSender {
+  BUILDBOT = "buildbot",
+  TALENTBOT = "talentbot",
+}
+
+export enum ChannelService {
+  FarcasterDC = "farcaster-dc",
+  XMTP = "xmtp",
+}
+
 export const messageSchema = z.object({
   text: z.string().min(1),
-  sender: z.string().min(1),
+  sender: z.nativeEnum(TalentProtocolSender),
   receiver: z.union([z.string().min(1), z.number()]),
-  channels: z.array(z.string()).default([]),
+  channels: z.array(z.nativeEnum(ChannelService)),
 });
 
 export type MessageBody = z.infer<typeof messageSchema>;

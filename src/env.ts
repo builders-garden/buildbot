@@ -26,12 +26,14 @@ const envSchema = z.object({
     .optional(),
   REDIS_USERNAME: z.string().optional(),
   REDIS_PASSWORD: z.string().optional(),
-  WARPCAST_API_KEY: z.string(),
+  // WARPCAST_API_KEY: z.string(),
   WEBHOOK_KEY: z.string().trim().min(1),
   REMINDER_CRON: z.string().trim().optional().default("0 0 * * 3"),
   WEEKLY_STATS_CRON: z.string().trim().optional().default("0 0 * * 0"),
   XMTP_ENV: z.enum(["production", "dev"]).default("dev"),
   XMTP_PRIVATE_KEY: z.string().trim().min(1),
+  BUILDBOT_WARPCAST_API_KEY: z.string(),
+  TALENTBOT_WARPCAST_API_KEY: z.string(),
 });
 
 const { data, success, error } = envSchema.safeParse(process.env);

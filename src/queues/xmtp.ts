@@ -16,14 +16,17 @@ export const processXMTPMessage = async (job: {
   const { text, recipient }: MessageWithRecipientBody = job.data;
 
   console.log(
-    `[xmtp worker] [${Date.now()}] - new xmtp message received. iterating.`
+    `[xmtp worker] [${new Date().toISOString()}] - new xmtp message received. iterating.`
   );
 
-  await sendXMTPMessage(recipient, text);
-
-  console.log(
-    `[xmtp worker] [${Date.now()}] - xmtp message sent successfully.`
-  );
+  try {
+    await sendXMTPMessage(recipient, text);
+    console.log(
+      `[xmtp worker] [${new Date().toISOString()}] - xmtp message sent successfully.`
+    );
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 if (env.REDIS_HOST) {

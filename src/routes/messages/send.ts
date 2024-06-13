@@ -1,47 +1,102 @@
 import { Request, Response } from "express";
-import { addToDCsQueue } from "../../queues/index.js";
-import { MessageBody, MessageWithFarcasterIdBody } from "../../schemas.js";
-import { getFarcasterUsersByAddresses } from "../../utils/farcaster.js";
+import { addToDCsQueue, addToXMTPQueue } from "../../queues/index.js";
+import {
+  ChannelService,
+  MessageBody,
+  MessageWithFarcasterIdBody,
+  MessageWithRecipientBody,
+} from "../../schemas.js";
+import {
+  getFarcasterUsersByAddresses,
+  getFarcasterUsersByFid,
+} from "../../utils/farcaster.js";
 
 export const sendHandler = async (req: Request, res: Response) => {
   try {
-    const { text, sender, receiver }: MessageBody = req.body;
+    const { text, sender, receiver, channels }: MessageBody = req.body;
 
     console.log(
-      `[sendHandler] [${new Date().toISOString()}] - new message received.`
+      `[sendHandler] [${new Date().toISOString()}] - new message request received.`
     );
 
-    let receiverFid: number;
-    // check if receiver is a string or a number
-    if (typeof receiver === "string") {
-      console.error(
-        `[sendHandler] [${new Date().toISOString()}] - receiver is an address.`
+    const jobsToRun: Promise<void>[] = [];
+
+    if (channels.includes(ChannelService.FarcasterDC)) {
+      console.log(
+        `[sendHandler] [${new Date().toISOString()}] - send a message using farcaster direct casts.`
       );
-      const users = await getFarcasterUsersByAddresses([receiver]);
-      const receiverUser = users[receiver.toLowerCase()];
-      if (!receiverUser) {
-        console.error(
-          `[sendHandler] [${new Date().toISOString()}] - receiver not found.`
+      let receiverFid: number;
+      // check if receiver is an address or a fid
+      if (typeof receiver === "string") {
+        console.log(
+          `[sendHandler] [${new Date().toISOString()}] - [FDC] - receiver is an address.`
         );
-        return res
-          .status(400)
-          .send({ status: "nok", error: "receiver not found" });
+        const users = await getFarcasterUsersByAddresses([receiver]);
+        const receiverUser = users[receiver.toLowerCase()];
+        if (!receiverUser) {
+          console.log(
+            `[sendHandler] [${new Date().toISOString()}] - [FDC] - receiver not found.`
+          );
+          return res
+            .status(400)
+            .send({ status: "nok", error: "receiver not found" });
+        }
+        receiverFid = receiverUser[0].fid;
+      } else {
+        console.log(
+          `[sendHandler] [${new Date().toISOString()}] - [FDC] - receiver is an id.`
+        );
+        receiverFid = receiver;
       }
-      receiverFid = receiverUser[0].fid;
-    } else {
-      console.error(
-        `[sendHandler] [${new Date().toISOString()}] - receiver is an id.`
-      );
-      receiverFid = receiver;
+
+      const message: MessageWithFarcasterIdBody = {
+        text,
+        farcasterId: receiverFid,
+        id: `${sender}-${receiver}-${Date.now()}`,
+        sender,
+      };
+
+      jobsToRun.push(addToDCsQueue(message));
     }
 
-    const message: MessageWithFarcasterIdBody = {
-      text,
-      farcasterId: receiverFid,
-      id: `${sender}-${receiver}-${Date.now()}`,
-    };
+    if (channels.includes(ChannelService.XMTP)) {
+      // add xmtp message to queue
+      console.log(
+        `[sendHandler] [${new Date().toISOString()}] - [XMTP] - send a message using xmtp.`
+      );
+      let recipientAddress: string;
+      if (typeof receiver !== "string") {
+        console.log(
+          `[sendHandler] [${new Date().toISOString()}] - [XMTP] - receiver is a farcaster fid.`
+        );
+        const user = await getFarcasterUsersByFid(receiver);
+        if (!user) {
+          console.log(
+            `[sendHandler] [${new Date().toISOString()}] - [XMTP] - recipient not found.`
+          );
+          return res
+            .status(400)
+            .send({ status: "nok", error: "recipient not found" });
+        }
+        recipientAddress =
+          user.verified_addresses.eth_addresses[0] || user.custody_address;
+      } else {
+        console.log(
+          `[sendHandler] [${new Date().toISOString()}] - [XMTP] - receiver is an address.`
+        );
+        recipientAddress = receiver;
+      }
 
-    await Promise.all([addToDCsQueue(message)]);
+      const message: MessageWithRecipientBody = {
+        text,
+        recipient: recipientAddress,
+        id: `${sender}-${recipientAddress}-${Date.now()}`,
+      };
+
+      jobsToRun.push(addToXMTPQueue(message));
+    }
+
+    await Promise.all(jobsToRun);
 
     return res.status(200).send({ status: "ok", body: req.body });
   } catch (error) {

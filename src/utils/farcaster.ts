@@ -7,6 +7,7 @@ import {
 } from "@neynar/nodejs-sdk/build/neynar-api/v2/index.js";
 import ky from "ky";
 import { v4 as uuidv4 } from "uuid";
+import { TalentProtocolSender } from "../schemas.js";
 
 const SIGNER_UUID = env.FARCASTER_SIGNER_UUID as string;
 const client = new NeynarAPIClient(env.FARCASTER_API_KEY as string);
@@ -45,10 +46,35 @@ export const publishCast = async (
  * @param {string} text the text of the cast to send
  * @param {number} recipient farcaster id of the recipient
  */
-export const sendDirectCast = async (recipient: number, text: string) => {
-  if (!env.FARCASTER_API_KEY) {
-    console.log("No FARCASTER_API_KEY found, skipping direct cast send.");
-    return;
+export const sendDirectCast = async (
+  recipient: number,
+  text: string,
+  sender: TalentProtocolSender = TalentProtocolSender.BUILDBOT
+) => {
+  let apiKey: string | undefined;
+  if (sender === TalentProtocolSender.BUILDBOT) {
+    if (!env.BUILDBOT_WARPCAST_API_KEY) {
+      console.error(
+        "No BUILDBOT_WARPCAST_API_KEY found, skipping direct cast send."
+      );
+      throw new Error("No BUILDBOT_WARPCAST_API_KEY found.");
+    }
+    apiKey = env.BUILDBOT_WARPCAST_API_KEY;
+  }
+
+  if (sender === TalentProtocolSender.TALENTBOT) {
+    if (!env.TALENTBOT_WARPCAST_API_KEY) {
+      console.error(
+        "No TALENTBOT_WARPCAST_API_KEY found, skipping direct cast send."
+      );
+      throw new Error("No TALENTBOT_WARPCAST_API_KEY found.");
+    }
+    apiKey = env.TALENTBOT_WARPCAST_API_KEY;
+  }
+
+  if (apiKey === undefined) {
+    console.error("No API key found, skipping direct cast send.");
+    throw new Error("No API key found.");
   }
 
   const {
@@ -56,7 +82,7 @@ export const sendDirectCast = async (recipient: number, text: string) => {
   } = await ky
     .put("https://api.warpcast.com/v2/ext-send-direct-cast", {
       headers: {
-        Authorization: `Bearer ${env.WARPCAST_API_KEY}`,
+        Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
       },
       json: {
