@@ -162,8 +162,10 @@ export const nominationsHandler = async (req: Request, res: Response) => {
       return res.status(200).send({ status: "nok" });
     }
 
+    const buildbotFid = env.BUILDBOT_FARCASTER_FID;
+
     const notBotProfiles = mentionedProfiles.filter(
-      (profile: { fid: number }) => profile.fid !== 531162
+      (profile: { fid: number }) => profile.fid !== buildbotFid
     );
 
     if (!notBotProfiles || notBotProfiles?.length === 0) {

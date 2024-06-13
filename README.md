@@ -70,7 +70,8 @@ XMTP_PRIVATE_KEY="" # XMTP private key (used for sending XMTP messages)
 WARPCAST_API_KEY="" # warpcast api key for sending direct casts
 ENABLE_JOBS="true" # whether to enable the scheduled jobs or not (default "true", can be omitted)
 BUILDBOT_WEBHOOK_NAME="" # name of the webhook for the buildbot (e.g. "buildbot-mentions-webhook") that needs to be published for sending casts and replies
-BUILDBOT_WEBHOOK_TARGET_URL="" # target URL for the webhook (e.g. "https://buildbot.example.com/webhooks/nominations")
+BUILDBOT_WEBHOOK_TARGET_BASE_URL="" # target BASE URL for the webhook (e.g. "https://buildbot.example.com")
+BUILDBOT_FARCASTER_FID="" # farcaster fid of the buildbot (used to check mentions)
 ```
 
 if you want to enable the **Redis** queues, you need to add the following environment variables:
