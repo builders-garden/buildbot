@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { MentionsBody, MessageBody } from "../../schemas.js";
+import { MentionsBody, SimpleCastBody } from "../../schemas.js";
 import {
   getFarcasterUsersByAddresses,
   isCorrectUser,
@@ -73,7 +73,7 @@ export const mentionsHandler = async (req: Request, res: Response) => {
     `[/webhooks/mentions] - from ${nominatorUsername} [${nominatorWallet}] to ${nominatedUsername} [${nominatedWallet}]`
   );
 
-  const message: MessageBody = {
+  const message: SimpleCastBody = {
     id: `${nominatorWallet}-${nominatedWallet}-${Date.now()}`,
     text: `@${nominatorUser[0].username} just nominated @${
       nominatedUser[0].username

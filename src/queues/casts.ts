@@ -1,5 +1,5 @@
 import { MetricsTime, Queue, Worker } from "bullmq";
-import { MessageBody } from "../schemas.js";
+import { SimpleCastBody } from "../schemas.js";
 import { env } from "../env.js";
 import { redisConnection } from "./connection.js";
 import { AxiosError } from "axios";
@@ -10,9 +10,9 @@ const CASTS_QUEUE_NAME = "casts";
  * @dev this function process the casts message from the queue, or directly if the queue is not available.
  * @param job the job to process
  */
-export const processCast = async (job: { data: MessageBody }) => {
+export const processCast = async (job: { data: SimpleCastBody }) => {
   // @ts-ignore
-  const { text }: MessageBody = job.data;
+  const { text }: SimpleCastBody = job.data;
 
   console.log(`[casts worker] [${Date.now()}] - new cast received. iterating.`);
 
@@ -29,7 +29,7 @@ if (env.REDIS_HOST) {
   // @ts-ignore
   const castsWorker = new Worker(
     CASTS_QUEUE_NAME,
-    async (job: { data: MessageBody }) => {
+    async (job: { data: SimpleCastBody }) => {
       try {
         await processCast(job);
       } catch (error) {

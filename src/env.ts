@@ -26,18 +26,22 @@ const envSchema = z.object({
     .optional(),
   REDIS_USERNAME: z.string().optional(),
   REDIS_PASSWORD: z.string().optional(),
-  WARPCAST_API_KEY: z.string(),
+  // WARPCAST_API_KEY: z.string(),
   WEBHOOK_KEY: z.string().trim().min(1),
   REMINDER_CRON: z.string().trim().optional().default("0 0 * * 3"),
   WEEKLY_STATS_CRON: z.string().trim().optional().default("0 0 * * 0"),
   XMTP_ENV: z.enum(["production", "dev"]).default("dev"),
-  XMTP_PRIVATE_KEY: z.string().trim().min(1),
-  // new env variables
+  // BUILDBOT
+  BUILDBOT_WARPCAST_API_KEY: z.string(),
   BUILDBOT_WEBHOOK_NAME: z.string().trim().min(1),
   BUILDBOT_WEBHOOK_TARGET_BASE_URL: z.string().url().trim().min(1),
   BUILDBOT_FARCASTER_FID: z
     .string()
     .transform((val) => (val ? parseInt(val) : undefined)),
+  BUILDBOT_XMTP_PRIVATE_KEY: z.string().trim().min(1),
+  // TALENTBOT
+  TALENTBOT_WARPCAST_API_KEY: z.string(),
+  TALENTBOT_XMTP_PRIVATE_KEY: z.string().trim().min(1),
 });
 
 const { data, success, error } = envSchema.safeParse(process.env);

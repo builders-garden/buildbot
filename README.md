@@ -66,12 +66,18 @@ WEBHOOK_KEY="" # webhook API key. must be the same one known by the build API
 REMINDER_CRON="0 0 * * 3" # cron expression for the reminder job (default "0 0 * * 3", can be omitted)
 WEEKLY_STATS_CRON="0 0 * * 0" # cron expression for the weekly stats job (default "0 0 * * 0", can be omitted)
 XMTP_ENV="dev" # XMTP environment (default "dev", can be omitted)
-XMTP_PRIVATE_KEY="" # XMTP private key (used for sending XMTP messages)
-WARPCAST_API_KEY="" # warpcast api key for sending direct casts
 ENABLE_JOBS="true" # whether to enable the scheduled jobs or not (default "true", can be omitted)
+
+# BUILDBOT params
+BUILDBOT_WARPCAST_API_KEY="wc_secret_567..." # warpcast api key for sending direct casts using buildbot
 BUILDBOT_WEBHOOK_NAME="" # name of the webhook for the buildbot (e.g. "buildbot-mentions-webhook") that needs to be published for sending casts and replies
 BUILDBOT_WEBHOOK_TARGET_BASE_URL="" # target BASE URL for the webhook (e.g. "https://buildbot.example.com")
 BUILDBOT_FARCASTER_FID="" # farcaster fid of the buildbot (used to check mentions)
+BUILDBOT_XMTP_PRIVATE_KEY="" # buildbot XMTP private key (used for sending XMTP messages)
+
+# TALENTBOT params
+TALENTBOT_WARPCAST_API_KEY="wc_secret_123..." # warpcast api key for sending direct casts using talentbot
+TALENTBOT_XMTP_PRIVATE_KEY="" # talentbot XMTP private key (used for sending XMTP messages)
 ```
 
 if you want to enable the **Redis** queues, you need to add the following environment variables:
@@ -98,6 +104,73 @@ the body of the request should be a JSON object with the following structure:
   "points": "", // points used in the nomination
   "nominatorFarcasterId": 0, // farcaster ID of the nominee
   "nomineeFarcasterId": 0 // farcaster ID of the nominator
+}
+```
+
+## 📨 messages
+
+the bot can be used to send messages through XMTP and Farcaster direct casts. a user receives a message only if they have subscribed to the bot for the given communication channel (direct casts or xmtp).
+
+lets see how to send messages through the bot.
+
+### `POST /messages`
+
+this endpoint is used to send messages through the bot. the body of the request should be a JSON object with the following structure:
+
+```json
+{
+  "text": "", // text of the message (e.g. "gm!")
+  "sender": "", // sender of the message, it determines which bot should send the message (MUST be one of the following: "buildbot", "talentbot")
+  "receiver": 1234 || "0x669fd...", // farcaster fid or user's address
+  "channels": ["xmtp", "farcaster-dc"] // communication channels where the message should be sent (MUST be an array with at least one of the following: "xmtp", "farcaster-dc")
+}
+```
+
+### `POST /messages/subscribe`
+
+this endpoint is used to subscribe a user to the bot for a specific communication channel. the body of the request should be a JSON object with the following structure:
+
+subscription to **Farcaster direct casts**:
+
+```json
+{
+  "channel": "farcaster-dc", // farcaster direct casts
+  "fid": 3, // farcaster fid of the user
+  "sender": "buildbot" || "talentbot" // bot that should send the messages
+}
+```
+
+subscription to **XMTP messages**:
+
+```json
+{
+  "channel": "xmtp", // XMTP messages
+  "address": "0x669fd...", // user's address
+  "sender": "buildbot" || "talentbot" // bot that should send the messages
+}
+```
+
+### `POST /messages/unsubscribe`
+
+this endpoint is used to unsubscribe a user from the bot for a specific communication channel. the body of the request should be a JSON object with the following structure:
+
+unsubscription from **Farcaster direct casts**:
+
+```json
+{
+  "channel": "farcaster-dc", // farcaster direct casts
+  "fid": 3, // farcaster fid of the user
+  "bot": "buildbot" || "talentbot" // bot that should send the messages
+}
+```
+
+unsubscription from **XMTP messages**:
+
+```json
+{
+  "channel": "xmtp", // XMTP messages
+  "address": "0x669fd...", // user's address
+  "bot": "buildbot" || "talentbot" // bot that should send the messages
 }
 ```
 

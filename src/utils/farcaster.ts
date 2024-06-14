@@ -7,6 +7,8 @@ import {
 } from "@neynar/nodejs-sdk/build/neynar-api/v2/index.js";
 import ky from "ky";
 import { v4 as uuidv4 } from "uuid";
+import { TalentProtocolSender } from "../schemas.js";
+import { Logger } from "./logger.js";
 
 const SIGNER_UUID = env.FARCASTER_SIGNER_UUID as string;
 const client = new NeynarAPIClient(env.FARCASTER_API_KEY as string);
@@ -16,6 +18,8 @@ const webhookUrl =
   env.BUILDBOT_WEBHOOK_TARGET_BASE_URL + "/webhooks/nominations";
 const buildbotFid = env.BUILDBOT_FARCASTER_FID as number;
 
+const logger = new Logger("farcaster");
+
 export const setupWebhook = async () => {
   const createdWebhooks = await client.fetchWebhooks();
   // check if a webhook with the same name already exists
@@ -24,7 +28,7 @@ export const setupWebhook = async () => {
       webhook.title === webhookName && webhook.target_url === webhookUrl
   );
   if (webhook) {
-    console.log(
+    logger.log(
       `webhook already exists, using webhook with id: ${webhook.webhook_id}`
     );
     return {
@@ -34,7 +38,7 @@ export const setupWebhook = async () => {
     };
   }
 
-  console.log("webhook does not exist - creating new webhook");
+  logger.log("webhook does not exist - creating new webhook");
   return await client.publishWebhook(webhookName, webhookUrl, {
     subscription: {
       "cast.created": {
@@ -64,10 +68,35 @@ export const publishCast = async (
  * @param {string} text the text of the cast to send
  * @param {number} recipient farcaster id of the recipient
  */
-export const sendDirectCast = async (recipient: number, text: string) => {
-  if (!env.FARCASTER_API_KEY) {
-    console.log("No FARCASTER_API_KEY found, skipping direct cast send.");
-    return;
+export const sendDirectCast = async (
+  recipient: number,
+  text: string,
+  sender: TalentProtocolSender = TalentProtocolSender.BUILDBOT
+) => {
+  let apiKey: string | undefined;
+  if (sender === TalentProtocolSender.BUILDBOT) {
+    if (!env.BUILDBOT_WARPCAST_API_KEY) {
+      logger.error(
+        "No BUILDBOT_WARPCAST_API_KEY found, skipping direct cast send."
+      );
+      throw new Error("No BUILDBOT_WARPCAST_API_KEY found.");
+    }
+    apiKey = env.BUILDBOT_WARPCAST_API_KEY;
+  }
+
+  if (sender === TalentProtocolSender.TALENTBOT) {
+    if (!env.TALENTBOT_WARPCAST_API_KEY) {
+      logger.error(
+        "No TALENTBOT_WARPCAST_API_KEY found, skipping direct cast send."
+      );
+      throw new Error("No TALENTBOT_WARPCAST_API_KEY found.");
+    }
+    apiKey = env.TALENTBOT_WARPCAST_API_KEY;
+  }
+
+  if (apiKey === undefined) {
+    logger.error("No API key found, skipping direct cast send.");
+    throw new Error("No API key found.");
   }
 
   const {
@@ -75,7 +104,7 @@ export const sendDirectCast = async (recipient: number, text: string) => {
   } = await ky
     .put("https://api.warpcast.com/v2/ext-send-direct-cast", {
       headers: {
-        Authorization: `Bearer ${env.FARCASTER_API_KEY}`,
+        Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
       },
       json: {
@@ -87,7 +116,7 @@ export const sendDirectCast = async (recipient: number, text: string) => {
     .json<{ result: { success: boolean } }>();
 
   if (!success) {
-    console.error(`error sending direct cast to ${recipient}.`);
+    logger.error(`error sending direct cast to ${recipient}.`);
   }
 };
 
@@ -130,13 +159,26 @@ export const getFarcasterUsersByAddresses = async (
     // .json<{ [key: string]: User[] }>();
     return await client.fetchBulkUsersByEthereumAddress(addresses);
   } catch (error) {
-    console.log(`error when calling neynar for addresses: ${addresses}`);
+    logger.log(`error when calling neynar for addresses: ${addresses}`);
     const users: { [key: string]: User[] | undefined } = {};
     addresses.forEach((address) => {
       users[address] = undefined;
     });
     return users;
   }
+};
+
+/**
+ * @dev this function returns a farcaster user by their farcaster id
+ * @param {number} fid the farcaster id to lookup
+ * @returns {Promise<User | undefined>} the user with the given farcaster id, or undefined
+ */
+export const getFarcasterUsersByFid = async (fid: number) => {
+  const { users } = await client.fetchBulkUsers([fid]);
+  if (users.length === 0) {
+    return undefined;
+  }
+  return users[0];
 };
 
 /**

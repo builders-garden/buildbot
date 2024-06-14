@@ -1,6 +1,6 @@
 import { env } from "./env.js";
 import express from "express";
-import { utilsRouter, webhooksRouter } from "./routes/index.js";
+import { messagesRouter, utilsRouter, webhooksRouter } from "./routes/index.js";
 import { startJobs } from "./jobs/index.js";
 import slowDown from "express-slow-down";
 import { setupWebhook } from "./utils/farcaster.js";
@@ -18,6 +18,7 @@ app.use(express.json({ limit: "10mb" }));
 app.use(apiLimiter);
 app.use("/", utilsRouter);
 app.use("/webhooks", webhooksRouter);
+app.use("/messages", messagesRouter);
 
 app.listen(env.PORT, async () => {
   console.log(`⚡️ buildbot running on port ${env.PORT}`);

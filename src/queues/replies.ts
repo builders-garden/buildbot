@@ -4,8 +4,10 @@ import { env } from "../env.js";
 import { redisConnection } from "./connection.js";
 import { AxiosError } from "axios";
 import { publishCast } from "../utils/farcaster.js";
+import { Logger } from "../utils/logger.js";
 
 const REPLIES_QUEUE_NAME = "replies";
+const logger = new Logger("replies-worker");
 
 /**
  * @dev this function process the reply message from the queue, or directly if the queue is not available.
@@ -15,17 +17,13 @@ export const processReply = async (job: { data: ReplyBody }) => {
   // @ts-ignore
   const { text, replyTo }: ReplyBody = job.data;
 
-  console.log(
-    `[replies worker] [${Date.now()}] - new reply received. iterating.`
-  );
+  logger.log(`new reply received. iterating.`);
 
   const hash = await publishCast(text, {
     replyTo,
   });
 
-  console.log(
-    `[replies worker] [${Date.now()}] - reply ${hash} published successfully .`
-  );
+  logger.log(`reply ${hash} published successfully .`);
 };
 
 if (env.REDIS_HOST) {
@@ -37,17 +35,11 @@ if (env.REDIS_HOST) {
         await processReply(job);
       } catch (error) {
         if (error instanceof AxiosError && error.response?.status === 429) {
-          console.log(
-            `[replies worker] [${Date.now()}] - rate limited, trying later.`
-          );
+          logger.log(`rate limited, trying later.`);
           await repliesWorker.rateLimit(1000 * 5);
           throw Worker.RateLimitError();
         } else if (error instanceof Error) {
-          console.error(
-            `[replies worker] [${Date.now()}] - error processing reply: ${
-              error.message
-            }.`
-          );
+          logger.error(`error processing reply: ${error.message}.`);
         }
       }
     },
