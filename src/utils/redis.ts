@@ -6,9 +6,7 @@ const redisConfig = {
   url: `redis://${env.REDIS_USERNAME}:${env.REDIS_PASSWORD}@${env.REDIS_HOST}:${env.REDIS_PORT}`,
 };
 
-const redisClient = await createClient(
-  env.REDIS_HOST === "0.0.0.0" ? redisConfig : undefined
-)
+const redisClient = await createClient(redisConfig)
   .on("error", (err) => console.log("Redis Client Error", err))
   .connect();
 
