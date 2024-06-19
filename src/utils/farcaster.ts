@@ -16,20 +16,19 @@ const client = new NeynarAPIClient(env.FARCASTER_API_KEY as string);
 const webhookName = env.BUILDBOT_WEBHOOK_NAME;
 const webhookUrl =
   env.BUILDBOT_WEBHOOK_TARGET_BASE_URL + "/webhooks/nominations";
-const buildbotFid = env.BUILDBOT_FARCASTER_FID as number;
+// const buildbotFid = env.BUILDBOT_FARCASTER_FID as number;
 
 const logger = new Logger("farcaster");
 
 export const setupWebhook = async () => {
   const createdWebhooks = await client.fetchWebhooks();
-  // check if a webhook with the same name already exists
   const webhook = createdWebhooks.webhooks.find(
     (webhook) =>
       webhook.title === webhookName && webhook.target_url === webhookUrl
   );
   if (webhook) {
     logger.log(
-      `webhook already exists, using webhook with id: ${webhook.webhook_id}`
+      `webhook already exists, using webhook with id ${webhook.webhook_id} and title ${webhook.title}`
     );
     return {
       success: true,
@@ -37,15 +36,18 @@ export const setupWebhook = async () => {
       webhook,
     };
   }
+  throw new Error(
+    "webhook does not exist - please create a new webhook before continuing."
+  );
 
-  logger.log("webhook does not exist - creating new webhook");
-  return await client.publishWebhook(webhookName, webhookUrl, {
-    subscription: {
-      "cast.created": {
-        mentioned_fids: [buildbotFid],
-      },
-    },
-  });
+  // logger.log("webhook does not exist - creating new webhook");
+  // return await client.publishWebhook(webhookName, webhookUrl, {
+  //   subscription: {
+  //     "cast.created": {
+  //       mentioned_fids: [buildbotFid],
+  //     },
+  //   },
+  // });
 };
 
 /**

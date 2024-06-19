@@ -14,7 +14,9 @@ export const processCast = async (job: { data: SimpleCastBody }) => {
   // @ts-ignore
   const { text }: SimpleCastBody = job.data;
 
-  console.log(`[casts worker] [${Date.now()}] - new cast received. iterating.`);
+  console.log(
+    `[casts worker] [${Date.now()}] - new cast received. iterating. text: ${text}`
+  );
 
   /*const hash = await publishCast(text, {
     replyTo: env.FARCASTER_REPLY_TO_CAST_HASH,

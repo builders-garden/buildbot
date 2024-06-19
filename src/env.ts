@@ -26,7 +26,6 @@ const envSchema = z.object({
     .optional(),
   REDIS_USERNAME: z.string().optional(),
   REDIS_PASSWORD: z.string().optional(),
-  // WARPCAST_API_KEY: z.string(),
   WEBHOOK_KEY: z.string().trim().min(1),
   REMINDER_CRON: z.string().trim().optional().default("0 0 * * 3"),
   WEEKLY_STATS_CRON: z.string().trim().optional().default("0 0 * * 0"),
@@ -39,6 +38,7 @@ const envSchema = z.object({
     .string()
     .transform((val) => (val ? parseInt(val) : undefined)),
   BUILDBOT_XMTP_PRIVATE_KEY: z.string().trim().min(1),
+  BUILD_SHARED_SECRET: z.string().trim().min(1),
   // TALENTBOT
   TALENTBOT_WARPCAST_API_KEY: z.string(),
   TALENTBOT_XMTP_PRIVATE_KEY: z.string().trim().min(1),
