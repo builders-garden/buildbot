@@ -1,11 +1,12 @@
 import { Request, Response } from "express";
-import ky from "ky";
+import ky, { HTTPError } from "ky";
 import { getCastFromHash } from "../../utils/farcaster.js";
 import { addToRepliesQueue } from "../../queues/index.js";
 import { env } from "../../env.js";
 import { Logger } from "../../utils/logger.js";
 
 const logger = new Logger("nominationsHandler");
+const regexPattern = /@buildbot\s+(nom(?:inate)?)\s*(?:@\w+)?\b/g;
 
 type Nomination = {
   id: number;
@@ -29,7 +30,7 @@ type NominationResult =
   | {
       ok: false;
       error: string;
-      status: string;
+      status: number;
     };
 
 const createNomination = async (
@@ -40,7 +41,7 @@ const createNomination = async (
   try {
     const result = await ky.post("https://build.top/api/nominations", {
       headers: {
-        "x-api-key": env.WEBHOOK_KEY,
+        "X-API-KEY": env.WEBHOOK_KEY,
       },
       json: {
         walletToNominate,
@@ -53,6 +54,19 @@ const createNomination = async (
       nomination,
     };
   } catch (error) {
+    if (error instanceof HTTPError && error.name === "HTTPError") {
+      const errorJson = await error.response.json();
+      console.error(
+        `[/webhooks/nominations] [${new Date().toISOString()}] - error sending nomination to build: ${
+          errorJson.error
+        }.`
+      );
+      return {
+        ok: false,
+        error: errorJson.error,
+        status: error.response.status,
+      };
+    }
     if (error instanceof Error) {
       console.error(
         `[/webhooks/nominations] [${new Date().toISOString()}] - error sending nomination to build: ${
@@ -62,7 +76,7 @@ const createNomination = async (
       return {
         ok: false,
         error: error.message,
-        status: error.name,
+        status: 500,
       };
     }
     throw error;
@@ -114,8 +128,8 @@ export const nominationsHandler = async (req: Request, res: Response) => {
       hash,
     } = data;
 
-    if (!text.includes("nominate") && !text.includes("nom")) {
-      replyWithError(hash);
+    if (text.match(regexPattern) === null) {
+      logger.error(`no nomination pattern found.`);
       return res.status(200).send({ status: "nok" });
     }
 
@@ -143,7 +157,11 @@ export const nominationsHandler = async (req: Request, res: Response) => {
           walletToNominate
         );
         if (nominationResult.ok === false) {
-          replyWithError(hash);
+          if (nominationResult.status === 400) {
+            replyWithError(hash, nominationResult.error);
+          } else {
+            replyWithError(hash);
+          }
           return res.status(200).send({ status: "nok" });
         }
         replyWithSuccess(
@@ -181,7 +199,11 @@ export const nominationsHandler = async (req: Request, res: Response) => {
         walletToNominate
       );
       if (nominationResult.ok === false) {
-        replyWithError(hash);
+        if (nominationResult.status === 400) {
+          replyWithError(hash, nominationResult.error);
+        } else {
+          replyWithError(hash);
+        }
         return res.status(200).send({ status: "nok" });
       }
       replyWithSuccess(
@@ -195,8 +217,22 @@ export const nominationsHandler = async (req: Request, res: Response) => {
 
     replyWithError(hash);
     return res.status(200).send({ status: "nok" });
-  } catch (error: any) {
-    logger.error(`error processing nomination: ${error.message}.`);
+  } catch (error) {
+    if (error instanceof HTTPError && error.name === "HTTPError") {
+      const errorJson = await error.response.json();
+      console.error(
+        `[/webhooks/nominations] [${new Date().toISOString()}] - error sending nomination to build: ${
+          errorJson.error
+        }.`
+      );
+    }
+    if (error instanceof Error) {
+      console.error(
+        `[/webhooks/nominations] [${new Date().toISOString()}] - error processing nomination: ${
+          error.message
+        }.`
+      );
+    }
     return res.status(200).send({ status: "nok" });
   }
 };
