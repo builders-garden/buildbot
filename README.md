@@ -160,7 +160,7 @@ unsubscription from **Farcaster direct casts**:
 {
   "channel": "farcaster-dc", // farcaster direct casts
   "fid": 3, // farcaster fid of the user
-  "bot": "buildbot" || "talentbot" // bot that should send the messages
+  "sender": "buildbot" || "talentbot" // bot that should send the messages
 }
 ```
 
@@ -170,7 +170,7 @@ unsubscription from **XMTP messages**:
 {
   "channel": "xmtp", // XMTP messages
   "address": "0x669fd...", // user's address
-  "bot": "buildbot" || "talentbot" // bot that should send the messages
+  "sender": "buildbot" || "talentbot" // bot that should send the messages
 }
 ```
 
