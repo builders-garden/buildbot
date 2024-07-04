@@ -11,11 +11,11 @@ const DCS_QUEUE_NAME = "dcs";
  * @param job the job to process
  */
 export const processDC = async (job: { data: MessageWithFarcasterIdBody }) => {
-  const { text, farcasterId } = job.data;
+  const { text, farcasterId, sender } = job.data;
 
   console.log(`[dcs worker] [${Date.now()}] - new dc received. iterating.`);
   try {
-    await sendDirectCast(farcasterId, text);
+    await sendDirectCast(farcasterId, text, sender);
     console.log(`[dcs worker] [${Date.now()}] - dc sent successfully.`);
   } catch (error) {
     console.error(error);

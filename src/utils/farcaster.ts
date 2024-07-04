@@ -83,6 +83,7 @@ export const sendDirectCast = async (
       );
       throw new Error("No BUILDBOT_WARPCAST_API_KEY found.");
     }
+    logger.log("sending direct cast as buildbot");
     apiKey = env.BUILDBOT_WARPCAST_API_KEY;
   }
 
@@ -93,6 +94,7 @@ export const sendDirectCast = async (
       );
       throw new Error("No TALENTBOT_WARPCAST_API_KEY found.");
     }
+    logger.log("sending direct cast as talentbot");
     apiKey = env.TALENTBOT_WARPCAST_API_KEY;
   }
 

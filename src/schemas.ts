@@ -48,7 +48,7 @@ export const messageWithFarcasterIdSchema = z.object({
   text: z.string().min(1),
   id: z.string().min(1),
   farcasterId: z.number(),
-  sender: z.optional(z.string()),
+  sender: z.optional(z.nativeEnum(TalentProtocolSender)),
 });
 
 export type MessageWithFarcasterIdBody = z.infer<
