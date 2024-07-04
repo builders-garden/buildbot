@@ -55,6 +55,20 @@ export type MessageWithFarcasterIdBody = z.infer<
   typeof messageWithFarcasterIdSchema
 >;
 
+export const newRemindersSchema = z.array(
+  z.object({
+    nominationsBudget: z.number().default(0),
+    nominationsSent: z.number().default(0),
+    farcasterId: z.number(),
+    username: z.string().min(1),
+    wallet: z.string().startsWith("0x").nullable(),
+    // wastedPoints: z.number().default(0),
+    // wallets: z.array(z.string().startsWith("0x")).default([]),
+  })
+);
+
+export type NewRemindersBody = z.infer<typeof newRemindersSchema>;
+
 export const remindersSchema = z.array(
   z.object({
     nominationsBudget: z.number().default(0),
