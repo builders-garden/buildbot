@@ -25,6 +25,25 @@ export const webhookKeyMiddleware = (
 };
 
 /**
+ * @dev simple middleware that checks for the presence of the x-api-key header
+ * @param {Request} req input express request
+ * @param {Response} res output express response
+ * @param {NextFunction} next express next function
+ */
+export const genericKeyMiddleware = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const apikey = req.header("x-api-key");
+  if (!apikey || apikey !== env.WEBHOOK_KEY) {
+    res.status(401).send("Unauthorized");
+    return;
+  }
+  next();
+};
+
+/**
  * @dev middleware that checks for the presence of the X-Neynar-Signature header and validates it (if there are multiple webhooks calling the bot we can use this to verify the source and prevent malicious or multiple requests)
  * @param {Request} req input express request
  * @param {Response} res output express response
