@@ -151,6 +151,46 @@ export const nominationsHandler = async (req: Request, res: Response) => {
         ? author.verified_addresses?.eth_addresses[0]
         : author.custody_address;
 
+    const buildbotFid = env.BUILDBOT_FARCASTER_FID;
+
+    const notBotProfiles = mentionedProfiles.filter(
+      (profile: { fid: number }) => profile.fid !== buildbotFid
+    );
+
+    if (notBotProfiles && notBotProfiles.length > 0) {
+      const mentionedProfile = notBotProfiles[0];
+      const walletToNominate =
+        mentionedProfile.verified_addresses.eth_addresses[0] ??
+        mentionedProfile.custody_address;
+
+      if (originWallet && walletToNominate) {
+        const nominationResult = await createNomination(
+          originWallet,
+          walletToNominate,
+          hash
+        );
+        if (nominationResult.ok === false) {
+          if (nominationResult.status === 400) {
+            replyWithError(hash, nominationResult.error);
+          } else {
+            replyWithError(hash);
+          }
+          return res.status(200).send({ status: "nok" });
+        }
+        replyWithSuccess(
+          hash,
+          author.username,
+          mentionedProfile.username,
+          nominationResult.nomination.buildPointsSent
+        );
+        return res.status(200).send({ status: "ok" });
+      }
+
+      logger.error(`no valid profiles mentioned.`);
+      replyWithError(hash);
+      return res.status(200).send({ status: "nok" });
+    }
+
     if (parentHash) {
       // check the parent cast and get its caster as the nominated user
       const parentCast = await getCastFromHash(parentHash);
@@ -189,45 +229,6 @@ export const nominationsHandler = async (req: Request, res: Response) => {
 
       replyWithError(hash);
       return res.status(200).send({ status: "nok" });
-    }
-
-    const buildbotFid = env.BUILDBOT_FARCASTER_FID;
-
-    const notBotProfiles = mentionedProfiles.filter(
-      (profile: { fid: number }) => profile.fid !== buildbotFid
-    );
-
-    if (!notBotProfiles || notBotProfiles?.length === 0) {
-      logger.error(`no valid profiles mentioned.`);
-      replyWithError(hash);
-      return res.status(200).send({ status: "nok" });
-    }
-
-    const mentionedProfile = notBotProfiles[0];
-    const walletToNominate =
-      mentionedProfile.verified_addresses.eth_addresses[0];
-
-    if (originWallet && walletToNominate) {
-      const nominationResult = await createNomination(
-        originWallet,
-        walletToNominate,
-        hash
-      );
-      if (nominationResult.ok === false) {
-        if (nominationResult.status === 400) {
-          replyWithError(hash, nominationResult.error);
-        } else {
-          replyWithError(hash);
-        }
-        return res.status(200).send({ status: "nok" });
-      }
-      replyWithSuccess(
-        hash,
-        author.username,
-        mentionedProfile.username,
-        nominationResult.nomination.buildPointsSent
-      );
-      return res.status(200).send({ status: "ok" });
     }
 
     replyWithError(hash);
