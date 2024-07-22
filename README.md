@@ -174,6 +174,30 @@ unsubscription from **XMTP messages**:
 }
 ```
 
+### `GET /messages/is-subscribed`
+
+this endpoint is used to check if a user is subscribed to the bot for a specific communication channel. the body parameters of the request should be a JSON object with the following structure:
+
+checking subscription to **Farcaster direct casts**:
+
+```json
+{
+  "channel": "farcaster-dc", // farcaster direct casts
+  "fid": 3, // farcaster fid of the user
+  "sender": "buildbot" || "talentbot" // bot that should send the messages
+}
+```
+
+checking subscription to **XMTP messages**:
+
+```json
+{
+  "channel": "xmtp", // XMTP messages
+  "address": "0x669fd...", // user's address
+  "sender": "buildbot" || "talentbot" // bot that should send the messages
+}
+```
+
 ## 🧳 scheduled jobs
 
 the bot has two scheduled jobs that run at specific times.
