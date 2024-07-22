@@ -139,6 +139,11 @@ export const nominationsHandler = async (req: Request, res: Response) => {
       return res.status(200).send({ status: "nok" });
     }
 
+    logger.log(`valid nomination pattern found - ${text}`);
+    logger.log(
+      `cast hash - ${hash} - parent hash - ${parentHash} - author - ${author.username}`
+    );
+
     const originWallet =
       author.verified_addresses &&
       author.verified_addresses.eth_addresses &&
