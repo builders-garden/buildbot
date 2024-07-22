@@ -35,20 +35,26 @@ type NominationResult =
 
 const createNomination = async (
   originWallet: string,
-  walletToNominate: string
+  walletToNominate: string,
+  castId?: string
 ): Promise<NominationResult> => {
   // send the request to the build API
   try {
+    logger.log(
+      `sending nomination with origin_wallet: ${originWallet}, destination_wallet: ${walletToNominate}, cast_id: ${castId}.`
+    );
     const result = await ky.post("https://build.top/api/nominations", {
       headers: {
         "X-API-KEY": env.WEBHOOK_KEY,
       },
       json: {
-        walletToNominate,
-        originWallet,
+        destination_wallet: walletToNominate,
+        origin_wallet: originWallet,
+        cast_id: castId,
       },
     });
     const nomination: Nomination = await result.json();
+    logger.log(`nomination result - ${JSON.stringify(nomination)}`);
     return {
       ok: true,
       nomination,
@@ -134,7 +140,9 @@ export const nominationsHandler = async (req: Request, res: Response) => {
     }
 
     const originWallet =
-      author.verified_addresses?.length > 0
+      author.verified_addresses &&
+      author.verified_addresses.eth_addresses &&
+      author.verified_addresses.eth_addresses.length > 0
         ? author.verified_addresses?.eth_addresses[0]
         : author.custody_address;
 
@@ -154,7 +162,8 @@ export const nominationsHandler = async (req: Request, res: Response) => {
       if (walletToNominate && originWallet) {
         const nominationResult = await createNomination(
           originWallet,
-          walletToNominate
+          walletToNominate,
+          hash
         );
         if (nominationResult.ok === false) {
           if (nominationResult.status === 400) {
@@ -196,7 +205,8 @@ export const nominationsHandler = async (req: Request, res: Response) => {
     if (originWallet && walletToNominate) {
       const nominationResult = await createNomination(
         originWallet,
-        walletToNominate
+        walletToNominate,
+        hash
       );
       if (nominationResult.ok === false) {
         if (nominationResult.status === 400) {
