@@ -6,7 +6,9 @@ import { env } from "../../env.js";
 import { Logger } from "../../utils/logger.js";
 
 const logger = new Logger("nominationsHandler");
-const regexPattern = /@buildbot\s+(nom(?:inate)?)\s*(?:@\w+)?\b/g;
+// const regexPattern = /@buildbot\s+(nom(?:inate)?)\s*(?:@\w+)?\b/g;
+const regexPattern =
+  /^(?:@buildbot\s+nom(?:inate)?(?:\s+@\S+)?|@\S+\s+nom(?:inate)?\s+@buildbot|nom(?:inate)?\s+@\S+\s+@buildbot|@\S+\s+nom(?:inate)?|nom(?:inate)?\s+@buildbot)$\b/g;
 
 type Nomination = {
   id: number;
@@ -41,7 +43,7 @@ const createNomination = async (
   // send the request to the build API
   try {
     logger.log(
-      `sending nomination with origin_wallet: ${originWallet}, destination_wallet: ${walletToNominate}, cast_id: ${castId}.`
+      `sending nomination with origin_wallet: ${originWallet}, destination_wallet: ${walletToNominate}, cast_id: ${castId}`
     );
     const result = await ky.post("https://build.top/api/nominations", {
       headers: {
@@ -117,7 +119,7 @@ export const nominationsHandler = async (req: Request, res: Response) => {
   try {
     const { body } = req;
 
-    logger.log(`new nomination on fc received.`);
+    logger.log(`new cast with @buildbot mention received.`);
 
     const { data } = body;
 
@@ -135,11 +137,11 @@ export const nominationsHandler = async (req: Request, res: Response) => {
     } = data;
 
     if (text.match(regexPattern) === null) {
-      logger.error(`no nomination pattern found.`);
+      logger.error(`no nomination pattern found. received text - ${text}`);
       return res.status(200).send({ status: "nok" });
     }
 
-    logger.log(`valid nomination pattern found - ${text}`);
+    logger.log(`valid nomination pattern found - received text - ${text}`);
     logger.log(
       `cast hash - ${hash} - parent hash - ${parentHash} - author - ${author.username}`
     );
