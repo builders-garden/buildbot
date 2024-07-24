@@ -6,9 +6,12 @@ import { env } from "../../env.js";
 import { Logger } from "../../utils/logger.js";
 
 const logger = new Logger("nominationsHandler");
-// const regexPattern = /@buildbot\s+(nom(?:inate)?)\s*(?:@\w+)?\b/g;
+// const regexPattern =
+//   /^(?:@buildbot\s+nom(?:inate)?(?:\s+@\S+)?|@\S+\s+nom(?:inate)?\s+@buildbot|nom(?:inate)?\s+@\S+\s+@buildbot|@\S+\s+nom(?:inate)?|nom(?:inate)?\s+@buildbot)$\b/g;
+// const regexPattern =
+//   /(?:@buildbot\s+(?:nominate|nom)\s+@[a-zA-Z0-9._]+|@buildbot\s+(?:nominate|nom)|(?:nominate|nom)\s+@[a-zA-Z0-9._]+\s+@buildbot|(?:nominate|nom)\s+@buildbot(?:\s+@[a-zA-Z0-9._]+)?|@[a-zA-Z0-9._]+\s+(?:nominate|nom)\s+@buildbot)\b/g;
 const regexPattern =
-  /^(?:@buildbot\s+nom(?:inate)?(?:\s+@\S+)?|@\S+\s+nom(?:inate)?\s+@buildbot|nom(?:inate)?\s+@\S+\s+@buildbot|@\S+\s+nom(?:inate)?|nom(?:inate)?\s+@buildbot)$\b/g;
+  /(?:@buildbot\s+(?:nominate|nom)\s+@\S+|@buildbot\s+(?:nominate|nom)|(?:nominate|nom)\s+@\S+\s+@buildbot|(?:nominate|nom)\s+@buildbot(?:\s+@\S+)?|@\S+\s+(?:nominate|nom)\s+@buildbot)\b/g;
 
 type Nomination = {
   id: number;
@@ -136,12 +139,17 @@ export const nominationsHandler = async (req: Request, res: Response) => {
       hash,
     } = data;
 
-    if (text.match(regexPattern) === null) {
+    const patternMatches: string[] = text.match(regexPattern);
+
+    if (patternMatches === null) {
       logger.error(`no nomination pattern found. received text - ${text}`);
       return res.status(200).send({ status: "nok" });
     }
 
+    const firstMatch = patternMatches[0];
+
     logger.log(`valid nomination pattern found - received text - ${text}`);
+    logger.log(`working on first match => ${firstMatch}`);
     logger.log(
       `cast hash - ${hash} - parent hash - ${parentHash} - author - ${author.username}`
     );
@@ -160,37 +168,63 @@ export const nominationsHandler = async (req: Request, res: Response) => {
     );
 
     if (notBotProfiles && notBotProfiles.length > 0) {
-      const mentionedProfile = notBotProfiles[0];
-      const walletToNominate =
-        mentionedProfile.verified_addresses.eth_addresses[0] ??
-        mentionedProfile.custody_address;
+      // check if the user has mentioned a profile to nominate that is included in the match
+      const patternWords = firstMatch.split(" ");
+      const mentionedProfileUsernameInsidePattern = patternWords.find(
+        (word) => word.startsWith("@") && word !== "@buildbot"
+      );
 
-      if (originWallet && walletToNominate) {
-        const nominationResult = await createNomination(
-          originWallet,
-          walletToNominate,
-          hash
+      if (mentionedProfileUsernameInsidePattern) {
+        // take mentioned profile from the mentionedProfiles array if the username matchers the mentionedProfileUsernameInsidePattern (without the "@"") or the username contains the mentionedProfileUsernameInsidePattern but ends with special characters like "." or "_" that are not included in the mentionedProfileUsernameInsidePattern
+        const mentionedProfile = notBotProfiles.find(
+          (profile: any) =>
+            profile.username ===
+              mentionedProfileUsernameInsidePattern.slice(1) ||
+            (profile.username.includes(
+              mentionedProfileUsernameInsidePattern.slice(1)
+            ) &&
+              (profile.username.endsWith(".") ||
+                profile.username.endsWith("_") ||
+                profile.username.endsWith("-") ||
+                profile.username.endsWith("!") ||
+                profile.username.endsWith("?") ||
+                profile.username.endsWith("#") ||
+                profile.username.endsWith("$")))
         );
-        if (nominationResult.ok === false) {
-          if (nominationResult.status === 400) {
-            replyWithError(hash, nominationResult.error);
-          } else {
-            replyWithError(hash);
+        logger.log(
+          `mentioned profile to nominate - ${mentionedProfile.username}`
+        );
+        const walletToNominate =
+          mentionedProfile.verified_addresses.eth_addresses[0] ??
+          mentionedProfile.custody_address;
+
+        if (originWallet && walletToNominate) {
+          const nominationResult = await createNomination(
+            originWallet,
+            walletToNominate,
+            hash
+          );
+          if (nominationResult.ok === false) {
+            if (nominationResult.status === 400) {
+              replyWithError(hash, nominationResult.error);
+            } else {
+              replyWithError(hash);
+            }
+            return res.status(200).send({ status: "nok" });
           }
-          return res.status(200).send({ status: "nok" });
+          replyWithSuccess(
+            hash,
+            author.username,
+            mentionedProfile.username,
+            nominationResult.nomination.buildPointsSent
+          );
+          return res.status(200).send({ status: "ok" });
         }
-        replyWithSuccess(
-          hash,
-          author.username,
-          mentionedProfile.username,
-          nominationResult.nomination.buildPointsSent
-        );
-        return res.status(200).send({ status: "ok" });
-      }
 
-      logger.error(`no valid profiles mentioned.`);
-      replyWithError(hash);
-      return res.status(200).send({ status: "nok" });
+        logger.error(`no valid profiles mentioned.`);
+        replyWithError(hash);
+        return res.status(200).send({ status: "nok" });
+      }
     }
 
     if (parentHash) {
