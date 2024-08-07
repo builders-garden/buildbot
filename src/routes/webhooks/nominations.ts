@@ -106,13 +106,12 @@ const replyWithSuccess = async (
   replyTo: string,
   nominator: string,
   nominee: string,
-  pointsSent: number,
   text?: string
 ) => {
   addToRepliesQueue({
     text:
       text ||
-      `Thanks @${nominator}, you just nominated @${nominee} with ${pointsSent} BUILD Points on https://build.top`,
+      `Thanks @${nominator}, you just nominated @${nominee}. Check out your stats at https://www.build.top/stats. And keep building!`,
     id: `replyTo-${replyTo}-${Date.now()}`,
     replyTo,
   });
@@ -212,12 +211,7 @@ export const nominationsHandler = async (req: Request, res: Response) => {
             }
             return res.status(200).send({ status: "nok" });
           }
-          replyWithSuccess(
-            hash,
-            author.username,
-            mentionedProfile.username,
-            nominationResult.nomination.buildPointsSent
-          );
+          replyWithSuccess(hash, author.username, mentionedProfile.username);
           return res.status(200).send({ status: "ok" });
         }
 
@@ -257,8 +251,7 @@ export const nominationsHandler = async (req: Request, res: Response) => {
         replyWithSuccess(
           hash,
           author.username,
-          parentCast.cast.author.username,
-          nominationResult.nomination.buildPointsSent
+          parentCast.cast.author.username
         );
         return res.status(200).send({ status: "ok" });
       }
