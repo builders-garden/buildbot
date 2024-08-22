@@ -18,6 +18,7 @@ export const processReply = async (job: { data: ReplyBody }) => {
   const { text, replyTo }: ReplyBody = job.data;
 
   logger.log(`new reply received. iterating.`);
+  logger.log(`reply text: ${text}`);
 
   const hash = await publishCast(text, {
     replyTo,
@@ -49,8 +50,10 @@ if (env.REDIS_HOST) {
         maxDataPoints: MetricsTime.ONE_WEEK,
       },
       limiter: {
-        max: 1,
-        duration: 1000 * 60,
+        // max: 24,
+        // duration: 1000 * 60,
+        max: 2,
+        duration: 1000,
       },
     }
   );
