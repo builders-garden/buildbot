@@ -1,10 +1,13 @@
 import { Request, Response } from "express";
-import { MentionsBody, SimpleCastBody } from "../../schemas.js";
+import {
+  MentionsBody,
+  // SimpleCastBody
+} from "../../schemas.js";
 import {
   getFarcasterUsersByAddresses,
   isCorrectUser,
 } from "../../utils/index.js";
-import { addToCastsQueue } from "../../queues/index.js";
+// import { addToCastsQueue } from "../../queues/index.js";
 
 /**
  * @dev this function handles the mentions webhook
