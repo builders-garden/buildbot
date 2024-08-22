@@ -73,15 +73,15 @@ export const mentionsHandler = async (req: Request, res: Response) => {
     `[/webhooks/mentions] - from ${nominatorUsername} [${nominatorWallet}] to ${nominatedUsername} [${nominatedWallet}]`
   );
 
-  const message: SimpleCastBody = {
-    id: `${nominatorWallet}-${nominatedWallet}-${Date.now()}`,
-    text: `@${nominatorUser[0].username} just nominated @${
-      nominatedUser[0].username
-    } with ${points.toFixed(2)} BUILD points`,
-  };
+  // const message: SimpleCastBody = {
+  //   id: `${nominatorWallet}-${nominatedWallet}-${Date.now()}`,
+  //   text: `@${nominatorUser[0].username} just nominated @${
+  //     nominatedUser[0].username
+  //   } with ${points.toFixed(2)} BUILD points`,
+  // };
 
   await Promise.all([
-    addToCastsQueue(message),
+    // addToCastsQueue(message),
     // addToDCsQueue({ ...message, farcasterId: nominatedUser[0].fid }),
     // addToXMTPQueue({
     //   ...message,
