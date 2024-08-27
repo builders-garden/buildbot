@@ -23,7 +23,6 @@ export const processReply = async (job: { data: ReplyBody }) => {
   const hash = await publishCast(text, {
     replyTo,
   });
-
   logger.log(`reply ${hash} published successfully .`);
 };
 
